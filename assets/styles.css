@@ -580,27 +580,45 @@ body[data-menu-open] .nav__toggle span:nth-child(2){transform:rotate(-45deg)}
 .principle .petal{width:24px;height:24px;color:var(--text-faint)}
 .principle__body{color:var(--text-muted);font-size:.95rem;line-height:1.62}
 
-/* ---------------- PROCESS ---------------- */
+/* ---------------- PROCESS ----------------
+   The connector is drawn per step, from this node's right edge to the next
+   node's left edge, so it is derived from the grid rather than guessed at.
+   The old single rail was positioned left:12.5%/right:12.5% — the centres of
+   four equal columns only IF the gap is zero. With a 30px gap the node centres
+   sit at 74/314/554/793 while the rail spanned 169-865, missing every one.
+   Running between the nodes rather than under them also means the node needs
+   no opaque fill, so it no longer has to know which surface it landed on. */
 .steps{position:relative}
-.steps__rail{
-  position:absolute;top:21px;
-  left:12.5%;right:12.5%;          /* centre of first column → centre of last */
-  height:1px;background:var(--border-strong);overflow:hidden;
+.steps__list{
+  --steps-gap:30px;
+  --node:44px;
+  --node-clear:12px;               /* breathing room either side of a node */
+  position:relative;display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:48px var(--steps-gap);
 }
-.steps__fill{
-  display:block;height:100%;
+.step{position:relative;display:flex;flex-direction:column}
+.step::after{
+  content:"";
+  position:absolute;
+  top:calc(var(--node) / 2);
+  left:calc(var(--node) + var(--node-clear));
+  width:calc(100% + var(--steps-gap) - var(--node) - var(--node-clear) * 2);
+  height:var(--hair);
   background:var(--accent);
-  /* filled statically — the rail is a rule, not an animation */
-  transform-origin:left center;
+  opacity:.4;
 }
-.steps__list{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:44px 30px}
-.step{display:flex;flex-direction:column;gap:15px}
+.step:last-child::after{display:none}
 .step__node{
   position:relative;z-index:1;
-  width:43px;height:43px;display:grid;place-items:center;
-  border:1px solid var(--accent);border-radius:50%;background:var(--surface-base);
+  width:var(--node);height:var(--node);
+  display:grid;place-items:center;
+  border:var(--hair) solid var(--accent);border-radius:50%;
+  background:transparent;
   font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;color:var(--accent);
+  margin-bottom:24px;             /* the number owns its own space above the label */
 }
+.step .h3{margin-bottom:10px}
 .step__body{color:var(--text-muted);font-size:.94rem;line-height:1.6}
 
 /* ---------------- WORK SPOTLIGHT ---------------- */
@@ -979,6 +997,7 @@ html.cursor-on,html.cursor-on a,html.cursor-on button,html.cursor-on .acc__q{cur
   .case__body{border-right:0;border-bottom:1px solid var(--border-hairline)}
 }
 @media (max-width:900px){
+  .step::after{display:none}
   .nav__links,.nav .btn{display:none}
   .nav__toggle{display:flex}
   .steps__rail{display:none}
