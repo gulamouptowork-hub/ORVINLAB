@@ -26,6 +26,14 @@
 </head>
 <body>
 
+<div class="loader" id="loader" hidden>
+  <div class="loader__inner">
+    <svg class="loader__mark" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
+    <div class="loader__wm" aria-hidden="true"><span style="--i:0">O</span><span style="--i:1">R</span><span style="--i:2">V</span><span style="--i:3">I</span><span style="--i:4">N</span><span style="--i:5">L</span><span style="--i:6">A</span><span style="--i:7">B</span><span style="--i:8">S</span><span style="--i:9">.</span></div>
+    <div class="loader__rule"></div>
+  </div>
+</div>
+
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="mark" viewBox="-26 -26 52 52">
     <g fill="currentColor">
@@ -38,7 +46,6 @@
 </svg>
 
 <a class="skip" href="#main">Skip to content</a>
-<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 <div id="navSentinel" style="position:absolute;top:0;height:10px;width:1px" aria-hidden="true"></div>
 
 <header class="nav" id="nav">
@@ -98,7 +105,7 @@
     <div class="wrap">
 
       <!-- ---------- 01 WEBSITES ---------- -->
-      <article class="case">
+      <article class="case" data-reveal style="--i:0">
         <div class="case__head">
           <p class="eyebrow eyebrow--neon">01 &middot; Websites</p>
           <h2 class="case__title">A site that loads before anyone loses interest.</h2>
@@ -146,7 +153,7 @@
       </article>
 
       <!-- ---------- 02 ADVERTISING ---------- -->
-      <article class="case">
+      <article class="case" data-reveal style="--i:1">
         <div class="case__head">
           <p class="eyebrow eyebrow--neon">02 &middot; Advertising</p>
           <h2 class="case__title">Spend aimed only at people already looking.</h2>
@@ -194,7 +201,7 @@
       </article>
 
       <!-- ---------- 03 AUTOMATION ---------- -->
-      <article class="case">
+      <article class="case" data-reveal style="--i:2">
         <div class="case__head">
           <p class="eyebrow eyebrow--neon">03 &middot; Automation</p>
           <h2 class="case__title">The jobs you do twice, done once.</h2>
@@ -242,7 +249,7 @@
       </article>
 
       <!-- ---------- 04 AI ---------- -->
-      <article class="case">
+      <article class="case" data-reveal style="--i:3">
         <div class="case__head">
           <p class="eyebrow eyebrow--neon">04 &middot; AI</p>
           <h2 class="case__title">It answers in your words, and you approve first.</h2>
@@ -293,44 +300,13 @@
   </section>
 
   <!-- ======================= CONTACT ======================= -->
-  <section class="section contact surface--inverse" id="contact">
-    <div class="wrap">
-      <div class="contact__inner">
-        <p class="eyebrow eyebrow--neon">Start here</p>
-        <h2 class="h2">Not sure which of the four you need?</h2>
-        <p class="lede">
-          Most people aren't, and guessing wrong is the expensive part. Send one line
-          about the business and we'll tell you which pillar would move the needle first —
-          and, just as usefully, which ones to leave until later.
-        </p>
-        <a class="mailto" href="mailto:hello@orvinlab.com">hello@orvinlab.com</a>
-        <p class="tiny">
-          Replies within one working day &middot; No sales sequence, ever
-        </p>
-      </div>
-    </div>
-  </section>
+      <div id="site-contact" data-eyebrow="Start here" data-heading="Not sure which of the four you need?" data-lede="Most people are not, and guessing wrong is the expensive part. Send one line about the business and we will tell you which service would move the needle first."></div>
 
 </main>
 
-<footer class="footer surface--inverse">
-  <div class="wrap footer__inner">
-    <a class="wm" href="index.html" aria-label="ORVINLABS — home"
-      ><span aria-hidden="true">ORVINLABS</span><span class="wm__dot" aria-hidden="true"></span
-    ></a>
-    <nav class="footer__links" aria-label="Footer">
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="work.html">Work</a>
-      <a href="products.html">Services</a>
-      <a href="mailto:hello@orvinlab.com">hello@orvinlab.com</a>
-    </nav>
-    <p class="footer__legal">&copy; <span id="year">2026</span> ORVINLABS</p>
-  </div>
-</footer>
+<div id="site-footer"></div>
 
-<!-- GSAP: UMD build, so it works as a classic script with no build step -->
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+<script src="assets/chrome.js"></script>
 <script src="assets/main.js" defer></script>
 </body>
 </html>

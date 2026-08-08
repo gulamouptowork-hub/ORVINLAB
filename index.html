@@ -26,6 +26,14 @@
 </head>
 <body>
 
+<div class="loader" id="loader" hidden>
+  <div class="loader__inner">
+    <svg class="loader__mark" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
+    <div class="loader__wm" aria-hidden="true"><span style="--i:0">O</span><span style="--i:1">R</span><span style="--i:2">V</span><span style="--i:3">I</span><span style="--i:4">N</span><span style="--i:5">L</span><span style="--i:6">A</span><span style="--i:7">B</span><span style="--i:8">S</span><span style="--i:9">.</span></div>
+    <div class="loader__rule"></div>
+  </div>
+</div>
+
 <!-- The four-petal mark, defined once. Every instance on the page is a <use> of
      this symbol, so the geometry lives in exactly one place. -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -40,7 +48,6 @@
 </svg>
 
 <a class="skip" href="#main">Skip to content</a>
-<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 <div id="navSentinel" style="position:absolute;top:0;height:10px;width:1px" aria-hidden="true"></div>
 
 <header class="nav" id="nav">
@@ -113,7 +120,7 @@
   <!-- ======================= WHY WE EXIST ======================= -->
   <section class="section surface--sunken">
     <div class="wrap">
-      <div class="section-head section-head--centre">
+      <div class="section-head section-head--centre" data-reveal>
         <p class="eyebrow eyebrow--neon">Why we exist</p>
         <h2 class="h2">You were sold four things that don't talk to each other.</h2>
         <p class="lede">
@@ -124,7 +131,7 @@
       </div>
 
       <div class="pairs">
-        <div class="pair">
+        <div class="pair" data-reveal style="--i:0">
           <div class="pair__side pair__side--pain">
             <p class="pair__tag">What you have now</p>
             <p class="pair__text">
@@ -141,7 +148,7 @@
           </div>
         </div>
 
-        <div class="pair">
+        <div class="pair" data-reveal style="--i:1">
           <div class="pair__side pair__side--pain">
             <p class="pair__tag">What you have now</p>
             <p class="pair__text">
@@ -158,7 +165,7 @@
           </div>
         </div>
 
-        <div class="pair">
+        <div class="pair" data-reveal style="--i:2">
           <div class="pair__side pair__side--pain">
             <p class="pair__tag">What you have now</p>
             <p class="pair__text">
@@ -174,7 +181,7 @@
           </div>
         </div>
 
-        <div class="pair">
+        <div class="pair" data-reveal style="--i:3">
           <div class="pair__side pair__side--pain">
             <p class="pair__tag">What you have now</p>
             <p class="pair__text">
@@ -200,7 +207,7 @@
 
   <section class="section surface--base">
     <div class="wrap">
-      <div class="section-head section-head--centre">
+      <div class="section-head section-head--centre" data-reveal>
         <p class="eyebrow eyebrow--neon">What changes first</p>
         <h2 class="h2">The work gets easier to run.</h2>
         <p class="lede">
@@ -210,22 +217,22 @@
       </div>
 
       <div class="stats">
-        <div class="stat">
+        <div class="stat" data-reveal style="--i:0">
           <p class="stat__num"><i>Fast enough</i></p>
           <p class="stat__label">Lean sites</p>
           <p class="stat__note">Built to feel immediate on phones and clean to search engines.</p>
         </div>
-        <div class="stat">
+        <div class="stat" data-reveal style="--i:1">
           <p class="stat__num"><i>Less retyping</i></p>
           <p class="stat__label">Automation</p>
           <p class="stat__note">Quotes, reminders and follow-ups stop eating the same time twice.</p>
         </div>
-        <div class="stat">
+        <div class="stat" data-reveal style="--i:2">
           <p class="stat__num"><i>Clear source</i></p>
           <p class="stat__label">Advertising</p>
           <p class="stat__note">Calls and enquiries are tied back to the channel that produced them.</p>
         </div>
-        <div class="stat">
+        <div class="stat" data-reveal style="--i:3">
           <p class="stat__num"><i>You own it</i></p>
           <p class="stat__label">Handover</p>
           <p class="stat__note">Domain, hosting, ad accounts and data stay in your name.</p>
@@ -237,7 +244,7 @@
   <!-- ======================= FEATURED WORK ======================= -->
   <section class="section surface--tint">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <p class="eyebrow eyebrow--neon">Selected work</p>
         <h2 class="h2">Three jobs, start to finish.</h2>
         <p class="lede">
@@ -247,28 +254,28 @@
       </div>
 
       <div class="teasers">
-        <a class="teaser" href="work.html">
+        <a class="teaser" data-reveal style="--i:0" href="work.html">
           <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
           <h3 class="teaser__title">UniConnect</h3>
           <p class="teaser__body">
             A whole campus buying, selling and reuniting lost things in one place.
           </p>
         </a>
-        <a class="teaser" href="work.html">
+        <a class="teaser" data-reveal style="--i:1" href="work.html">
           <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
           <h3 class="teaser__title">Trade workflow</h3>
           <p class="teaser__body">
             Quotes that price themselves, so Friday nights stopped being admin nights.
           </p>
         </a>
-        <a class="teaser" href="work.html">
+        <a class="teaser" data-reveal style="--i:2" href="work.html">
           <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
           <h3 class="teaser__title">Retail workflow</h3>
           <p class="teaser__body">
             Phone orders off the notepad and into something that doesn't lose them.
           </p>
         </a>
-        <a class="teaser" href="work.html">
+        <a class="teaser" data-reveal style="--i:3" href="work.html">
           <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
           <h3 class="teaser__title">Read all three</h3>
           <p class="teaser__body">
@@ -282,7 +289,7 @@
   <!-- ======================= WHAT WE DO ======================= -->
   <section class="section surface--base">
     <div class="wrap">
-      <div class="section-head section-head--centre">
+      <div class="section-head section-head--centre" data-reveal>
         <p class="eyebrow eyebrow--neon">Services</p>
         <h2 class="h2">Four services. They work best together.</h2>
         <p class="lede">
@@ -292,7 +299,7 @@
       </div>
 
       <div class="cards">
-        <article class="card">
+        <article class="card" data-reveal style="--i:0">
           <div class="card__top">
             <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
             <span class="card__num">01</span>
@@ -310,7 +317,7 @@
           </ul>
         </article>
 
-        <article class="card">
+        <article class="card" data-reveal style="--i:1">
           <div class="card__top">
             <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
             <span class="card__num">02</span>
@@ -327,7 +334,7 @@
           </ul>
         </article>
 
-        <article class="card">
+        <article class="card" data-reveal style="--i:2">
           <div class="card__top">
             <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
             <span class="card__num">03</span>
@@ -345,7 +352,7 @@
           </ul>
         </article>
 
-        <article class="card">
+        <article class="card" data-reveal style="--i:3">
           <div class="card__top">
             <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
             <span class="card__num">04</span>
@@ -375,7 +382,7 @@
   <!-- ======================= PROCESS ======================= -->
   <section class="section surface--sunken" id="process">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <p class="eyebrow eyebrow--neon">How it goes</p>
         <h2 class="h2">Four steps, and you always know which one you're in.</h2>
         <p class="lede">
@@ -431,99 +438,66 @@
   <!-- ======================= FAQ ======================= -->
   <section class="section surface--base">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <p class="eyebrow eyebrow--neon">Common questions</p>
         <h2 class="h2">The three things everybody asks first.</h2>
       </div>
 
-      <div class="faq">
-        <details class="faq__item">
-          <summary class="faq__q">
+      <div class="accs">
+        <div class="acc" data-reveal style="--i:0" data-acc" data-reveal style="--i:0>
+          <button class="acc__q" type="button" aria-expanded="false">
             What does this actually cost?
-            <span class="faq__sign" aria-hidden="true"></span>
-          </summary>
-          <p class="faq__a">
+            <span class="acc__sign" aria-hidden="true"></span>
+          </button>
+          <div class="acc__panel"><div><p>
             A site for a small business usually lands between a few hundred and a few
             thousand, depending on how many pages and how much of it we write. Ads are
             billed at cost — you pay Google or Meta directly and we charge for the
             managing, so we never profit from talking you into a bigger budget. You'll
             have a number in writing before anyone starts, and it doesn't move unless
             you ask for something new.
-          </p>
-        </details>
+          </p></div></div>
+        </div>
 
-        <details class="faq__item">
-          <summary class="faq__q">
+        <div class="acc" data-reveal style="--i:1" data-acc" data-reveal style="--i:1>
+          <button class="acc__q" type="button" aria-expanded="false">
             I'm not technical at all. Is that a problem?
-            <span class="faq__sign" aria-hidden="true"></span>
-          </summary>
-          <p class="faq__a">
+            <span class="acc__sign" aria-hidden="true"></span>
+          </button>
+          <div class="acc__panel"><div><p>
             No — it's most of who we work with. You'll never be asked to choose between
             two hosting plans or told something is "just a DNS thing." We handle the
             plumbing, and the only part you touch is a text box where you change your
             prices. If a sentence we send you needs a second read, that's our mistake to
             fix, not yours to decode.
-          </p>
-        </details>
+          </p></div></div>
+        </div>
 
-        <details class="faq__item">
-          <summary class="faq__q">
+        <div class="acc" data-reveal style="--i:2" data-acc" data-reveal style="--i:2>
+          <button class="acc__q" type="button" aria-expanded="false">
             What happens if I want to leave?
-            <span class="faq__sign" aria-hidden="true"></span>
-          </summary>
-          <p class="faq__a">
+            <span class="acc__sign" aria-hidden="true"></span>
+          </button>
+          <div class="acc__panel"><div><p>
             You take everything with you, because it was already yours. The domain,
             hosting, ad accounts and data are registered in your name on day one, not
             ours — so leaving is a password change, not a negotiation. There's no
             minimum term and nothing to buy back. A studio that has to trap you isn't
             confident about the work.
-          </p>
-        </details>
+          </p></div></div>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ======================= CONTACT ======================= -->
-  <section class="section contact surface--inverse" id="contact">
-    <div class="wrap">
-      <div class="contact__inner">
-        <p class="eyebrow eyebrow--neon">Start here</p>
-        <h2 class="h2">One line about your business is enough.</h2>
-        <p class="lede">
-          Not a brief. Not a budget. Just tell us what's eating your week — the quote you
-          keep retyping, the site you're embarrassed to send, the ads you can't read.
-          You'll get a real person's answer within a day, saying whether we can help and
-          roughly what it costs. If we're the wrong fit we'll say so and point you
-          somewhere better.
-        </p>
-        <a class="mailto" href="mailto:hello@orvinlab.com">hello@orvinlab.com</a>
-        <p class="tiny">
-          Replies within one working day &middot; No sales sequence, ever
-        </p>
-      </div>
-    </div>
-  </section>
+      <div id="site-contact" data-eyebrow="Start here" data-heading="One line about your business is enough." data-lede="Not a brief. Not a budget. Just tell us what is eating your week — the quote you keep retyping, the site you are embarrassed to send, the ads you cannot read. You will get a real person&rsquo;s answer within a day."></div>
 
 </main>
 
-<footer class="footer surface--inverse">
-  <div class="wrap footer__inner">
-    <a class="wm" href="index.html" aria-label="ORVINLABS — home"
-      ><span aria-hidden="true">ORVINLABS</span><span class="wm__dot" aria-hidden="true"></span
-    ></a>
-    <nav class="footer__links" aria-label="Footer">
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="work.html">Work</a>
-      <a href="products.html">Services</a>
-      <a href="mailto:hello@orvinlab.com">hello@orvinlab.com</a>
-    </nav>
-    <p class="footer__legal">&copy; <span id="year">2026</span> ORVINLABS</p>
-  </div>
-</footer>
+<div id="site-footer"></div>
 
-<!-- GSAP: UMD build, so it works as a classic script with no build step -->
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+<script src="assets/chrome.js"></script>
 <script src="assets/main.js" defer></script>
 </body>
 </html>

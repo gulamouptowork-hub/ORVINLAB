@@ -49,7 +49,8 @@
   --border-strong:rgba(0,0,0,.16);
   --border-hairline-inverse:#232D28;
   --border-strong-inverse:#587166;    /* 3.3:1 on inverse-raised — safe for focus */
-  --dot-ink:rgba(0,0,0,.10);          /* decorative grid dots, not a border */
+  --dot-ink:rgba(0,0,0,.10);
+  --glow-inverse:rgba(50,255,78,.13);          /* decorative grid dots, not a border */
 
   /* ---------- GLASS ---------- */
   --scrim:rgba(255,255,255,.72);
@@ -786,65 +787,124 @@ body[data-menu-open] .nav__toggle span:nth-child(2){transform:rotate(-45deg)}
    ============================================================ */
 .cursor,.cursor-dot{
   position:fixed;top:0;left:0;z-index:300;
-  border-radius:50%;
-  pointer-events:none;
-  opacity:0;
+  pointer-events:none;opacity:0;
   will-change:transform;
+  transition:opacity var(--dur-base) var(--ease-out);
 }
-.cursor{
-  width:36px;height:36px;margin:-18px 0 0 -18px;
-  border:1.5px solid var(--accent);
-  background:transparent;
+/* The ring is a zero-size anchor that JS positions; the visible circle is the
+   pseudo-element, which SCALES. Animating width/height/margin here would be
+   animating layout — free on a fixed element, but still against the rule, and
+   transform is what the compositor actually wants. */
+.cursor::before,.cursor-dot::before{
+  content:"";position:absolute;left:50%;top:50%;border-radius:50%;
+  transform:translate(-50%,-50%) scale(1);
+  transition:transform var(--dur-base) var(--ease-out),
+             background-color var(--dur-base) var(--ease-out);
 }
-.cursor-dot{
-  width:6px;height:6px;margin:-3px 0 0 -3px;
-  background:var(--accent);
-  /* the halo is the bright brand green at low alpha: on white it reads as a
-     green bloom around the darker core. A literal glow needs a dark backdrop,
-     which this page no longer has. */
-  box-shadow:0 0 10px var(--accent-bright),0 0 22px var(--accent-bright);
-}
-html.has-cursor,
-html.has-cursor a,
-html.has-cursor button,
-html.has-cursor summary,
-html.has-cursor .faq__q{cursor:none}
+.cursor::before{width:36px;height:36px;border:var(--hair-2) solid var(--accent)}
+.cursor-dot::before{width:6px;height:6px;background:var(--accent)}
+.cursor-on .cursor,.cursor-on .cursor-dot{opacity:1}
+.cursor.is-hover::before{transform:translate(-50%,-50%) scale(1.78);background:var(--accent-wash)}
+.cursor.is-down::before{transform:translate(-50%,-50%) scale(.78)}
+html.cursor-on,html.cursor-on a,html.cursor-on button,html.cursor-on .acc__q{cursor:none}
 
-/* ---------------- MAGNETIC PULL ----------------
-   GSAP animates --mag-x/--mag-y rather than the transform itself, so the CSS
-   :active press feedback still composes on top. Writing transform directly from
-   JS would make an inline style that kills :active outright. */
-.btn,.teaser,.mailto{
-  --mag-x:0px; --mag-y:0px;
-  transform:translate(var(--mag-x),var(--mag-y));
-}
-.btn:active{transform:translate(var(--mag-x),var(--mag-y)) scale(.97)}
+/* Magnetism writes custom properties, never style.transform: the stylesheet
+   composes translate() with the :active scale, and an inline transform would
+   overwrite it and kill press feedback outright. */
+.btn,.teaser,.mailto,.channel{--mag-x:0px;--mag-y:0px;transform:translate(var(--mag-x),var(--mag-y))}
+.btn:active{transform:translate(var(--mag-x),var(--mag-y)) scale(.98)}
+.teaser:active,.channel:active{transform:translate(var(--mag-x),var(--mag-y)) scale(.99)}
 
 /* ============================================================
-   HOVER — pointer devices only, so taps don't stick in a hover state.
-   Neon appears on borders, glow and text. Never as a large fill.
+   ACCORDION
    ============================================================ */
-@media (hover:hover) and (pointer:fine){
-  .btn:hover{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
-  .btn--neon:hover{background:var(--cta-hover);border-color:var(--cta-hover);color:var(--on-cta);box-shadow:0 0 0 1px var(--accent-wash-strong),0 0 22px var(--accent-wash)}
-  .textlink:hover{color:var(--accent)}
-  .textlink:hover .arrow{transform:translateX(5px)}
-  .nav__link:hover{color:var(--text)}
-  .nav__link:hover::after{transform:scaleX(1)}
-  .nav__brand:hover .petal{color:var(--accent)}
-  .menu__link:hover{color:var(--accent);transform:translateX(12px)}
-  .card:hover{background:var(--surface-raised)}
-  .card:hover::after{opacity:1}
-  .card:hover .petal{color:var(--accent);transform:rotate(90deg)}
-  .teaser:hover{background:var(--surface-raised)}
-  .teaser:hover .petal{color:var(--accent);transform:rotate(90deg)}
-  .chip:hover{border-color:var(--border-strong);color:var(--text)}
-  .faq__q:hover{color:var(--text)}
-  .faq__q:hover .faq__sign::before,.faq__q:hover .faq__sign::after{background:var(--accent)}
-  .faq__item[open] .faq__q:hover{color:var(--accent)}
-  
-  .mailto:hover{transform:translateY(-2px)}
-  .footer__links a:hover{color:var(--accent)}
+.acc{border-bottom:var(--hair) solid var(--border-hairline)}
+.acc__q{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:24px 0;text-align:left;
+  font-family:var(--font-display);font-weight:600;
+  font-size:clamp(1.02rem,1.9vw,1.22rem);letter-spacing:-.015em;
+  color:var(--text);
+  transition:color var(--dur-fast) var(--ease-out);
+}
+.acc__sign{position:relative;flex:none;width:14px;height:14px}
+.acc__sign::before,.acc__sign::after{
+  content:"";position:absolute;inset:50% 0 auto 0;height:var(--hair-2);
+  background:var(--text-muted);transform:translateY(-50%);
+  transition:transform var(--dur-base) var(--ease-out),
+             background-color var(--dur-fast) var(--ease-out);
+}
+.acc__sign::after{transform:translateY(-50%) rotate(90deg)}
+.acc[data-open] .acc__q{color:var(--accent)}
+.acc[data-open] .acc__sign::before{transform:translateY(-50%) rotate(45deg)}
+.acc[data-open] .acc__sign::after{transform:translateY(-50%) rotate(135deg)}
+.acc[data-open] .acc__sign::before,.acc[data-open] .acc__sign::after{background:var(--accent)}
+/* 0fr to 1fr — never a guessed max-height */
+.acc__panel{
+  display:grid;grid-template-rows:0fr;
+  transition:grid-template-rows var(--dur-base) var(--ease-in-out);
+}
+.acc[data-open] .acc__panel{grid-template-rows:1fr}
+.acc__panel > div{overflow:hidden;min-height:0}
+.acc__panel p{padding:0 48px 26px 0;color:var(--text-muted);line-height:1.68;max-width:70ch}
+
+/* ============================================================
+   CONTACT ANCHOR
+   The only heavy-contrast moment on the page. The shift from light to
+   dark is what signals the end.
+   ============================================================ */
+.contact{position:relative;text-align:center;overflow:hidden}
+.contact__glow{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(46% 52% at 50% 32%,var(--glow-inverse),transparent 70%);
+}
+.contact__inner{display:flex;flex-direction:column;align-items:center;gap:20px}
+.contact .lede{max-width:55ch;color:var(--text-inverse-muted)}
+.contact__note{color:var(--text-inverse-muted)}
+.channels{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+  width:100%;max-width:760px;margin-top:14px;
+}
+.channel{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:26px 18px;
+  background:var(--surface-inverse-raised);
+  border:var(--hair) solid var(--border-hairline-inverse);
+  border-radius:var(--radius);
+  transition:border-color var(--dur-base) var(--ease-out),
+             background-color var(--dur-base) var(--ease-out),
+             transform var(--dur-base) var(--ease-out);
+}
+.channel__icon{
+  width:22px;height:22px;color:var(--accent-bright);
+  transition:transform var(--dur-base) var(--ease-out);
+}
+.channel__label{font-family:var(--font-display);font-weight:600;font-size:1.02rem;color:var(--text-inverse)}
+.channel__sub{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;color:var(--text-inverse-muted)}
+
+/* ============================================================
+   FOOTER — continuous with the contact anchor, no seam
+   ============================================================ */
+.footer{padding:clamp(56px,7vw,84px) 0 34px}
+.footer__grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.2fr;gap:40px}
+.footer__col ul{display:flex;flex-direction:column;gap:10px}
+.footer__col a{color:var(--text-inverse-muted);transition:color var(--dur-fast) var(--ease-out)}
+.footer__head{
+  margin-bottom:16px;
+  font-family:var(--font-mono);font-size:11px;font-weight:400;
+  text-transform:uppercase;letter-spacing:.16em;color:var(--accent-bright);
+}
+.footer__col--brand .wm{display:inline-flex;align-items:center;gap:10px;font-size:1.05rem;color:var(--text-inverse)}
+.footer__col--brand .petal{width:18px;height:18px}
+.footer__blurb{margin-top:14px;color:var(--text-inverse-muted);font-size:.92rem;line-height:1.6;max-width:34ch}
+.footer__contact a{display:flex;align-items:center;gap:9px}
+.footer__contact .channel__icon{width:16px;height:16px;color:var(--text-inverse-muted)}
+.footer__base{
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  margin-top:clamp(36px,5vw,56px);padding-top:22px;
+  border-top:var(--hair) solid var(--border-hairline-inverse);
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;
+  color:var(--text-inverse-muted);text-transform:uppercase;
 }
 
 /* ============================================================
@@ -918,40 +978,6 @@ html.has-cursor .faq__q{cursor:none}
   .steps__list{grid-template-columns:1fr;gap:30px}
 }
 
-/* ============================================================
-   ACCESSIBILITY FALLBACKS
-   ============================================================ */
-
-/* Reduced motion, tiered — not a kill switch.
-   Tier 1 (vestibular): drift, spin, pulse, ambient glow → removed.
-   Tier 2: the hero entrance → short cross-fade, no displacement.
-   Tier 3: opacity, colour and focus-ring transitions → kept. */
-@media (prefers-reduced-motion:reduce){
-  .cursor,.cursor-dot{display:none}
-  /* var(--dur-nil), not 0s, so anything listening for transitionend still fires */
-  *,*::before,*::after{
-    animation-duration:.01ms !important;
-    animation-iteration-count:1 !important;
-    transition-duration:.01ms !important;
-    scroll-behavior:auto !important;
-  }
-  html{scroll-behavior:auto}
-  .backdrop__grid,.cursor-glow{display:none}
-  .scrollcue__line::after{display:none}
-  .nav__brand .petal{animation:none !important;transform:none !important}
-  /* Tier 1 — the zoom-out reveal is exactly the kind of large-scale movement
-     that triggers vestibular responses. Drop it to a plain static mark. */
-  .hero .wm{animation:none !important;filter:none !important;transform:none !important}
-  .hero .wm__dot{animation:none !important;transform:none !important}
-
-
-  /* Tier 3 — feedback that must survive */
-  .btn,.nav__link,.textlink,.card,.teaser,.chip,.mailto,.footer__links a{
-    transition-duration:var(--dur-fast) !important;
-  }
-}
-
-/* Glass is decoration; it must be defeatable. */
 @media (prefers-reduced-transparency:reduce){
   .nav.is-scrolled{background:var(--surface-raised);-webkit-backdrop-filter:none;backdrop-filter:none}
   .menu{background:var(--surface-raised);-webkit-backdrop-filter:none;backdrop-filter:none}
@@ -960,4 +986,138 @@ html.has-cursor .faq__q{cursor:none}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   .nav.is-scrolled{background:var(--scrim)}
   .menu{background:var(--scrim-menu)}
+}
+
+/* ============================================================
+   HOVER + FOCUS — one vocabulary, used everywhere.
+   Gated to fine pointers so a tap never sticks in a hover state.
+   ============================================================ */
+@media (hover:hover) and (pointer:fine){
+  /* --- cards: four changes on one timing, so they read as one gesture --- */
+  .card,.teaser,.principle,.stat,.case,.channel{
+    transition:border-color var(--dur-base) var(--ease-out),
+               background-color var(--dur-base) var(--ease-out),
+               box-shadow var(--dur-base) var(--ease-out),
+               transform var(--dur-base) var(--ease-out);
+  }
+  .card:hover,.teaser:hover,.principle:hover,.stat:hover{
+    border-color:var(--accent);
+    background:var(--accent-wash);
+    box-shadow:var(--shadow-hover);
+    transform:translate(var(--mag-x,0px),var(--mag-y,0px)) translateY(-3px);
+  }
+  .card:hover .petal,.teaser:hover .petal,.principle:hover .petal{
+    color:var(--accent);transform:rotate(90deg);
+  }
+  .card .petal,.teaser .petal,.principle .petal{
+    transition:color var(--dur-base) var(--ease-out),transform var(--dur-base) var(--ease-out);
+  }
+
+  /* --- buttons: the fill sweeps in, it does not fade --- */
+  .btn{position:relative;overflow:hidden;isolation:isolate}
+  .btn::before{
+    content:"";position:absolute;inset:0;z-index:-1;
+    background:var(--cta);
+    transform:scaleX(0);transform-origin:left center;
+    transition:transform var(--dur-base) var(--ease-out);
+  }
+  .btn--neon:hover::before{transform:scaleX(1)}
+  .btn--neon:hover{border-color:var(--cta);color:var(--on-cta)}
+  .btn:not(.btn--neon):hover{border-color:var(--border-strong);background:var(--accent-wash);color:var(--accent)}
+  .btn .arrow,.textlink .arrow{transition:transform var(--dur-base) var(--ease-out)}
+  .btn:hover .arrow,.textlink:hover .arrow{transform:translateX(4px)}
+
+  /* --- links: the underline draws from the left --- */
+  .textlink,.footer__col a,.menu__mail{
+    background-image:linear-gradient(currentColor,currentColor);
+    background-repeat:no-repeat;
+    background-position:0 100%;
+    background-size:0% var(--hair);
+    transition:background-size var(--dur-base) var(--ease-out),color var(--dur-fast) var(--ease-out);
+  }
+  .textlink:hover,.footer__col a:hover,.menu__mail:hover{background-size:100% var(--hair)}
+  .footer__col a:hover{color:var(--text-inverse)}
+  .nav__link:hover{color:var(--text)}
+  .nav__link:hover::after{transform:scaleX(1)}
+  .menu__link:hover{color:var(--accent);transform:translateX(12px)}
+  .chip:hover{border-color:var(--border-strong);color:var(--text)}
+  .acc__q:hover{color:var(--accent)}
+  .acc__q:hover .acc__sign::before,.acc__q:hover .acc__sign::after{background:var(--accent)}
+  .mailto:hover{transform:translate(var(--mag-x,0px),var(--mag-y,0px)) translateY(-2px)}
+
+  /* --- channel cards on the dark anchor --- */
+  .channel:hover{
+    border-color:var(--accent-bright);
+    background:var(--accent-wash);
+    transform:translate(var(--mag-x,0px),var(--mag-y,0px)) translateY(-3px);
+  }
+  .channel:hover .channel__icon{transform:scale(1.1)}
+  .nav__brand:hover .petal{color:var(--accent)}
+}
+
+/* the current page keeps a persistent underline */
+.nav__link[aria-current="page"]::after{transform:scaleX(1)}
+
+/* ============================================================
+   NAV SCROLL STATE
+   ============================================================ */
+/* The ONE deliberate exception to transform-and-opacity-only. The brief asks
+   for the bar to shrink ~30% on scroll, and a shorter bar with same-size text
+   cannot be expressed as a transform — scaleY would squash the wordmark. The
+   nav is position:fixed, so this reflows nothing outside itself. */
+.nav{transition:background-color var(--dur-base) var(--ease-out),
+                border-color var(--dur-base) var(--ease-out),
+                box-shadow var(--dur-base) var(--ease-out),
+                height var(--dur-base) var(--ease-out)}
+.nav.is-scrolled{
+  background:var(--scrim);
+  -webkit-backdrop-filter:blur(var(--blur-nav)) saturate(var(--sat-nav));
+  backdrop-filter:blur(var(--blur-nav)) saturate(var(--sat-nav));
+  border-bottom:var(--hair) solid var(--border-hairline);
+  box-shadow:var(--shadow-raised);
+  height:calc(var(--nav-h) * .7);
+}
+
+/* ============================================================
+   RESPONSIVE — the channels row and the footer grid are the two
+   things most likely to break, so they get explicit steps.
+   ============================================================ */
+@media (max-width:900px){
+  .footer__grid{grid-template-columns:1fr 1fr;gap:34px}
+}
+@media (max-width:640px){
+  .channels{grid-template-columns:1fr}
+  .channel{flex-direction:row;justify-content:flex-start;gap:14px;padding:18px 20px;text-align:left}
+  .channel__label{flex:none}
+  .channel__sub{margin-left:auto}
+}
+@media (max-width:560px){
+  .footer__grid{grid-template-columns:1fr;gap:30px}
+  .footer__base{flex-direction:column;gap:8px}
+  .acc__panel p{padding-right:0}
+}
+
+/* ============================================================
+   REDUCED MOTION — everything off, nothing stranded.
+   The reveals are opt-in above, so they need no override here:
+   their resting state is already visible.
+   ============================================================ */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:var(--dur-nil)!important;
+    animation-iteration-count:1!important;
+    transition-duration:var(--dur-nil)!important;
+    scroll-behavior:auto!important;
+  }
+  html{scroll-behavior:auto}
+  .loader{display:none!important}
+  .cursor,.cursor-dot{display:none!important}
+  .backdrop__grid{animation:none!important}
+  /* colour still changes, it just arrives at once */
+  .card:hover,.teaser:hover,.principle:hover,.stat:hover,.channel:hover,.mailto:hover{transform:none!important}
+  .card:hover .petal,.teaser:hover .petal,.principle:hover .petal{transform:none!important}
+  .menu__link:hover{transform:none!important}
+  .btn::before{display:none}
+  .textlink,.footer__col a,.menu__mail{background-size:0 var(--hair)!important}
+  .textlink:hover,.footer__col a:hover,.menu__mail:hover{background-size:100% var(--hair)!important}
 }

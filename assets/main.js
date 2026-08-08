@@ -1,305 +1,252 @@
 /* ============================================================
-   ORVINLAB — shared behaviour
-   Loaded by every page with <script src="assets/main.js" defer>
-   Each block no-ops when its target isn't on the current page.
+   ORVINLABS — shared behaviour. Vanilla only, no libraries.
+   Every block no-ops when its target is absent, so all four pages
+   load the same file.
    ============================================================ */
 (function () {
   "use strict";
 
-  /* ---- reduced motion: read it live, users toggle the OS setting
-          without reloading, and CSS media queries can't gate JS ---- */
-  var reduceMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var reduce = reduceMQ.matches;
+  var reduceMQ = matchMedia("(prefers-reduced-motion: reduce)");
+  var fineMQ = matchMedia("(hover: hover) and (pointer: fine)");
+  var reduced = function () { return reduceMQ.matches; };
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
 
-  /* ---- current year ---- */
-  var year = document.getElementById("year");
+  var year = $("#year");
   if (year) year.textContent = new Date().getFullYear();
 
-  /* ---- nav glass state, driven by a sentinel instead of a scroll listener ---- */
-  var nav = document.getElementById("nav");
-  var sentinel = document.getElementById("navSentinel");
-  if (nav && sentinel && "IntersectionObserver" in window) {
-    new IntersectionObserver(function (entries) {
-      nav.classList.toggle("is-scrolled", !entries[0].isIntersecting);
-    }).observe(sentinel);
-  } else if (nav) {
-    nav.classList.add("is-scrolled");
-  }
+  /* ============================================================
+     LOAD SEQUENCE
+     Hard cap 1400ms. sessionStorage gates it to first load only;
+     every later navigation in the session gets a 200ms cross-fade.
+     The overlay is created BY script, so if script never runs there
+     is nothing to trap the page behind.
+     ============================================================ */
+  (function () {
+    var host = $("#loader");
+    if (!host) return;
+    var seen = false;
+    try { seen = sessionStorage.getItem("orv.seen") === "1"; } catch (e) { seen = true; }
 
-  /* ---- mobile menu ---- */
-  var toggle = document.getElementById("menuToggle");
-  var menu = document.getElementById("menu");
+    if (reduced()) { host.remove(); return; }
 
-  if (toggle && menu) {
-    var toggleLabel = toggle.querySelector(".sr");
-    var idleTimer;
-    var lastFocus = null;
-    var pageLocks = [
-      document.querySelector(".skip"),
-      document.querySelector("main"),
-      document.querySelector("footer")
-    ].filter(Boolean);
+    host.hidden = false;
+    document.documentElement.classList.add("is-loading");
+    host.setAttribute("data-mode", seen ? "quick" : "full");
 
-    var setPageLock = function (open) {
-      pageLocks.forEach(function (node) {
-        if ("inert" in node) node.inert = open;
-        if (open) node.setAttribute("aria-hidden", "true");
-        else node.removeAttribute("aria-hidden");
+    var done = function () {
+      document.documentElement.classList.remove("is-loading");
+      host.setAttribute("data-out", "");
+      setTimeout(function () { host.remove(); }, 520);
+      try { sessionStorage.setItem("orv.seen", "1"); } catch (e) {}
+    };
+    // the cap is a timeout, not the end of a chain: if a font or a frame
+    // stalls, the page still clears on schedule
+    setTimeout(done, seen ? 200 : 1150);
+  })();
+
+  /* ============================================================
+     NAV — scroll state via a sentinel, no scroll listener
+     ============================================================ */
+  (function () {
+    var nav = $("#nav"), sentinel = $("#navSentinel");
+    if (!nav) return;
+    if (!sentinel || !("IntersectionObserver" in window)) { nav.classList.add("is-scrolled"); return; }
+    new IntersectionObserver(function (e) {
+      nav.classList.toggle("is-scrolled", !e[0].isIntersecting);
+    }, { rootMargin: "80px 0px 0px 0px" }).observe(sentinel);
+  })();
+
+  /* ============================================================
+     SCROLL REVEALS — one observer for the whole page
+     ============================================================ */
+  (function () {
+    var els = $$("[data-reveal]");
+    if (!els.length) return;
+    if (reduced() || !("IntersectionObserver" in window)) {
+      els.forEach(function (el) { el.classList.add("is-in"); });
+      return;
+    }
+    // above the fold is already visible; moving it is just latency
+    var fold = innerHeight;
+    var io = new IntersectionObserver(function (entries, obs) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        en.target.classList.add("is-in");
+        obs.unobserve(en.target);
+      });
+    }, { threshold: 0.15 });
+
+    els.forEach(function (el) {
+      if (el.getBoundingClientRect().top < fold) { el.classList.add("is-in"); return; }
+      io.observe(el);
+    });
+  })();
+
+  /* ============================================================
+     ACCORDION — grid-template-rows 0fr → 1fr, never a guessed height
+     ============================================================ */
+  $$("[data-acc]").forEach(function (acc) {
+    var btn = $(".acc__q", acc), panel = $(".acc__panel", acc);
+    if (!btn || !panel) return;
+    btn.addEventListener("click", function () {
+      var open = acc.hasAttribute("data-open");
+      if (open) acc.removeAttribute("data-open"); else acc.setAttribute("data-open", "");
+      btn.setAttribute("aria-expanded", String(!open));
+    });
+  });
+
+  /* ============================================================
+     MOBILE MENU
+     ============================================================ */
+  (function () {
+    var toggle = $("#menuToggle"), menu = $("#menu");
+    if (!toggle || !menu) return;
+    var label = $(".sr", toggle), idle, lastFocus = null;
+    var locks = [$(".skip"), $("main"), $("footer")].filter(Boolean);
+
+    var lock = function (on) {
+      locks.forEach(function (n) {
+        if ("inert" in n) n.inert = on;
+        if (on) n.setAttribute("aria-hidden", "true"); else n.removeAttribute("aria-hidden");
       });
     };
-
-    var getMenuFocusables = function () {
-      return Array.prototype.slice.call(
-        menu.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
-      );
+    var focusables = function () {
+      return $$('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])', menu);
     };
-
-    var setMenu = function (open) {
+    var set = function (open) {
       toggle.setAttribute("aria-expanded", String(open));
-      if (toggleLabel) toggleLabel.textContent = open ? "Close menu" : "Open menu";
-
-      clearTimeout(idleTimer);
-      menu.classList.add("is-active");           // will-change, just in time
-
+      if (label) label.textContent = open ? "Close menu" : "Open menu";
+      clearTimeout(idle);
+      menu.classList.add("is-active");
       if (open) {
         lastFocus = document.activeElement;
-        menu.removeAttribute("data-closed");
         menu.setAttribute("data-open", "");
         document.body.setAttribute("data-menu-open", "");
-        setPageLock(true);
-        var firstLink = menu.querySelector(".menu__link");
-        if (firstLink) firstLink.focus({ preventScroll: true });
+        lock(true);
+        var f = $(".menu__link", menu); if (f) f.focus({ preventScroll: true });
       } else {
         menu.removeAttribute("data-open");
-        menu.setAttribute("data-closed", "");
         document.body.removeAttribute("data-menu-open");
-        setPageLock(false);
-        // release the compositor layer once the surface is idle again
-        idleTimer = setTimeout(function () { menu.classList.remove("is-active"); }, 400);
-        if (lastFocus && typeof lastFocus.focus === "function") {
-          lastFocus.focus({ preventScroll: true });
-        } else {
-          toggle.focus({ preventScroll: true });
-        }
+        lock(false);
+        idle = setTimeout(function () { menu.classList.remove("is-active"); }, 500);
+        (lastFocus && lastFocus.focus ? lastFocus : toggle).focus({ preventScroll: true });
       }
     };
 
     toggle.addEventListener("click", function () {
-      setMenu(toggle.getAttribute("aria-expanded") !== "true");
+      set(toggle.getAttribute("aria-expanded") !== "true");
     });
-
-    menu.addEventListener("click", function (e) {
-      if (e.target.closest("a")) setMenu(false);
-    });
-
-    menu.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
-        e.preventDefault();
-        setMenu(false);
-        return;
-      }
-
-      if (e.key !== "Tab" || toggle.getAttribute("aria-expanded") !== "true") return;
-
-      var focusables = getMenuFocusables();
-      if (!focusables.length) {
-        e.preventDefault();
-        toggle.focus({ preventScroll: true });
-        return;
-      }
-
-      var first = focusables[0];
-      var last = focusables[focusables.length - 1];
-
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus({ preventScroll: true });
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus({ preventScroll: true });
-      }
-    });
-
+    menu.addEventListener("click", function (e) { if (e.target.closest("a")) set(false); });
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true" && !e.target.closest(".menu")) {
-        setMenu(false);
-      }
+      if (e.key !== "Escape" || toggle.getAttribute("aria-expanded") !== "true") return;
+      e.preventDefault(); set(false);
     });
-
-    /* close on resize back to desktop so the overlay can't strand the page */
-    window.addEventListener("resize", function () {
-      if (window.innerWidth > 900 && toggle.getAttribute("aria-expanded") === "true") {
-        setMenu(false);
-      }
+    menu.addEventListener("keydown", function (e) {
+      if (e.key !== "Tab" || toggle.getAttribute("aria-expanded") !== "true") return;
+      var f = focusables(); if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     });
-  }
-
-  /* ---- cursor glow: fine pointers only, and only when motion is welcome ---- */
-  var glow = document.getElementById("cursorGlow");
-  if (glow) {
-    var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
-    var glowOn = false, gx = 0, gy = 0, queued = false;
-
-    var paint = function () {
-      queued = false;
-      // one write per frame, nothing read back — no forced synchronous layout
-      glow.style.transform = "translate3d(" + gx + "px," + gy + "px,0)";
-    };
-
-    var onMove = function (e) {
-      gx = e.clientX;
-      gy = e.clientY;
-      if (!glow.hasAttribute("data-on")) glow.setAttribute("data-on", "");
-      if (!queued) { queued = true; requestAnimationFrame(paint); }
-    };
-
-    var syncGlow = function () {
-      var want = finePointer.matches && !reduce;
-      if (want === glowOn) return;
-      glowOn = want;
-      if (want) {
-        window.addEventListener("pointermove", onMove, { passive: true });
-      } else {
-        window.removeEventListener("pointermove", onMove);
-        glow.removeAttribute("data-on");
-      }
-    };
-
-    syncGlow();
-
-    var onPreferenceChange = function () {
-      reduce = reduceMQ.matches;
-      syncGlow();
-    };
-    if (reduceMQ.addEventListener) {
-      reduceMQ.addEventListener("change", onPreferenceChange);
-      finePointer.addEventListener("change", syncGlow);
-    } else if (reduceMQ.addListener) {
-      reduceMQ.addListener(onPreferenceChange);   // Safari < 14
-      finePointer.addListener(syncGlow);
-    }
-  }
+    addEventListener("resize", function () {
+      if (innerWidth > 900 && toggle.getAttribute("aria-expanded") === "true") set(false);
+    });
+  })();
 
   /* ============================================================
-     CUSTOM CURSOR  +  MAGNETIC BUTTONS  +  TITLE TILT   (GSAP)
-
-     Gated on a fine pointer and on motion being welcome. Anything coarse or
-     reduced keeps the native cursor untouched — `cursor:none` also discards the
-     OS cursor size and contrast settings people rely on, so this is opt-in by
-     capability, not a default.
+     CURSOR + MAGNETIC PULL — vanilla rAF, no library
+     The ring lags, the dot tracks; that gap is the whole effect.
+     Hover growth is a CSS class, not JS: only position genuinely
+     needs per-frame interpolation.
      ============================================================ */
   (function () {
-    if (typeof gsap === "undefined") return;
+    var ring, dot, raf = null;
+    var tx = 0, ty = 0, rx = 0, ry = 0, dx = 0, dy = 0;
+    var magnet = null, mRect = null, mx = 0, my = 0;
+    var on = false;
 
-    var fine = window.matchMedia("(hover: hover) and (pointer: fine)");
-    if (!fine.matches || reduceMQ.matches) return;
+    function lerpK(k, dt) { return 1 - Math.pow(1 - k, dt / 16.67); }
 
-    var ring = document.createElement("div");
-    var dot = document.createElement("div");
-    ring.className = "cursor"; dot.className = "cursor-dot";
-    ring.setAttribute("aria-hidden", "true"); dot.setAttribute("aria-hidden", "true");
-    document.body.appendChild(ring); document.body.appendChild(dot);
-    document.documentElement.classList.add("has-cursor");
-
-    /* quickTo reuses one tween per property instead of spawning a new one per
-       mousemove — the difference is hundreds of tween objects a second. */
-    var rx = gsap.quickTo(ring, "x", { duration: 0.42, ease: "power3" });
-    var ry = gsap.quickTo(ring, "y", { duration: 0.42, ease: "power3" });
-    var dx = gsap.quickTo(dot, "x", { duration: 0.09, ease: "power2" });
-    var dy = gsap.quickTo(dot, "y", { duration: 0.09, ease: "power2" });
-
-    var shown = false, mag = null, mx = 0, my = 0;
-
-    window.addEventListener("pointermove", function (e) {
-      mx = e.clientX; my = e.clientY;
-      rx(mx); ry(my); dx(mx); dy(my);
-      if (!shown) {
-        shown = true;
-        gsap.to([ring, dot], { opacity: 1, duration: 0.3, overwrite: "auto" });   // never plain true: it would kill the quickTo x/y tweens
+    function frame(now) {
+      var dt = Math.min(50, now - (frame.last || now)); frame.last = now;
+      rx += (tx - rx) * lerpK(0.13, dt);
+      ry += (ty - ry) * lerpK(0.13, dt);
+      dx += (tx - dx) * lerpK(0.50, dt);
+      dy += (ty - dy) * lerpK(0.50, dt);
+      ring.style.transform = "translate3d(" + rx + "px," + ry + "px,0)";
+      dot.style.transform = "translate3d(" + dx + "px," + dy + "px,0)";
+      if (magnet && mRect) {
+        // cached rect: reading it per frame would force layout every frame
+        var ox = Math.max(-10, Math.min(10, (tx - (mRect.left + mRect.width / 2)) * 0.22));
+        var oy = Math.max(-10, Math.min(10, (ty - (mRect.top + mRect.height / 2)) * 0.28));
+        mx += (ox - mx) * lerpK(0.15, dt);
+        my += (oy - my) * lerpK(0.15, dt);
+        // CSS custom properties, never style.transform: the stylesheet composes
+        // translate() with :active scale(), and an inline transform would kill it
+        magnet.style.setProperty("--mag-x", mx.toFixed(2) + "px");
+        magnet.style.setProperty("--mag-y", my.toFixed(2) + "px");
       }
-      if (mag) pull(mag);
-    }, { passive: true });
-
-    /* leaving the window entirely — not just crossing an element */
-    document.addEventListener("pointerleave", function () {
-      shown = false;
-      gsap.to([ring, dot], { opacity: 0, duration: 0.25, overwrite: "auto" });
-    });
-
-    var MAG_SEL = ".btn, .teaser, .mailto";
-    var HOVER_SEL = "a, button, summary, .faq__q, .chip, " + MAG_SEL;
-
-    function pull(el) {
-      var r = el.getBoundingClientRect();
-      var ox = mx - (r.left + r.width / 2);
-      var oy = my - (r.top + r.height / 2);
-      // capped: past ~10px it stops reading as attraction and starts reading as a bug
-      var cap = 10;
-      gsap.to(el, {
-        "--mag-x": Math.max(-cap, Math.min(cap, ox * 0.22)) + "px",
-        "--mag-y": Math.max(-cap, Math.min(cap, oy * 0.28)) + "px",
-        duration: 0.4, ease: "power3", overwrite: "auto"
-      });
-    }
-    function release(el) {
-      gsap.to(el, {
-        "--mag-x": "0px", "--mag-y": "0px",
-        duration: 0.7, ease: "elastic.out(1, 0.55)", overwrite: "auto"
-      });
+      raf = requestAnimationFrame(frame);
     }
 
-    document.addEventListener("pointerover", function (e) {
-      var t = e.target.closest ? e.target.closest(HOVER_SEL) : null;
-      if (!t) return;
-      gsap.to(ring, {
-        width: 62, height: 62, margin: "-31px 0 0 -31px",
-        borderWidth: 1, borderColor: "rgba(50,255,78,.95)",
-        boxShadow: "0 0 18px rgba(50,255,78,.55), 0 0 40px rgba(50,255,78,.25)",
-        duration: 0.35, ease: "power3", overwrite: "auto"
-      });
-      gsap.to(dot, { scale: 0.5, duration: 0.35, ease: "power3", overwrite: "auto" });
-      var m = e.target.closest(MAG_SEL);
-      if (m) { mag = m; pull(m); }
-    });
+    var MAG = ".btn, .teaser, .channel, .mailto";
+    var HOV = "a, button, summary, .acc__q, .chip, " + MAG;
 
-    document.addEventListener("pointerout", function (e) {
-      var t = e.target.closest ? e.target.closest(HOVER_SEL) : null;
-      if (!t) return;
-      // ignore moves between a child and its own parent
-      if (e.relatedTarget && t.contains(e.relatedTarget)) return;
-      gsap.to(ring, {
-        width: 36, height: 36, margin: "-18px 0 0 -18px",
-        borderWidth: 1.5, borderColor: "",
-        boxShadow: "none",
-        duration: 0.4, ease: "power3", overwrite: "auto"
-      });
-      gsap.to(dot, { scale: 1, duration: 0.4, ease: "power3", overwrite: "auto" });
-      var m = e.target.closest(MAG_SEL);
-      if (m) { if (mag === m) mag = null; release(m); }
-    });
-
-    /* press feedback on the ring, so a click registers on the cursor too */
-    window.addEventListener("pointerdown", function () {
-      gsap.to(ring, { scale: 0.8, duration: 0.12, ease: "power2", overwrite: "auto" });
-    });
-    window.addEventListener("pointerup", function () {
-      gsap.to(ring, { scale: 1, duration: 0.3, ease: "power3", overwrite: "auto" });
-    });
-
-    /* ---- the title keeps its subtle 3D tilt, now driven by GSAP ---- */
-    var title = document.getElementById("title3d");
-    if (title) {
-      var trx = gsap.quickTo(title, "rotationX", { duration: 0.7, ease: "power3" });
-      var trY = gsap.quickTo(title, "rotationY", { duration: 0.7, ease: "power3" });
-      gsap.set(title, { transformPerspective: 1100, transformOrigin: "50% 50%" });
-      window.addEventListener("pointermove", function (e) {
-        var r = title.getBoundingClientRect();
-        var nx = (e.clientX - (r.left + r.width / 2)) / Math.max(1, r.width);
-        var ny = (e.clientY - (r.top + r.height / 2)) / Math.max(1, r.height * 2.2);
-        // a few degrees only; more than that stops reading as depth
-        trx(Math.max(-1, Math.min(1, -ny)) * 4.2);
-        trY(Math.max(-1, Math.min(1, nx)) * 5.6);
-      }, { passive: true });
+    function move(e) {
+      tx = e.clientX; ty = e.clientY;
+      if (!on) { on = true; rx = dx = tx; ry = dy = ty; document.documentElement.classList.add("cursor-on"); }
     }
+    function over(e) {
+      var t = e.target.closest && e.target.closest(HOV);
+      if (t) ring.classList.add("is-hover");
+      var m = e.target.closest && e.target.closest(MAG);
+      if (m && m !== magnet) { release(); magnet = m; mRect = m.getBoundingClientRect(); }
+    }
+    function out(e) {
+      var t = e.target.closest && e.target.closest(HOV);
+      if (t && !(e.relatedTarget && t.contains(e.relatedTarget))) ring.classList.remove("is-hover");
+      var m = e.target.closest && e.target.closest(MAG);
+      if (m && m === magnet && !(e.relatedTarget && m.contains(e.relatedTarget))) release();
+    }
+    function release() {
+      if (!magnet) return;
+      var el = magnet; magnet = null; mRect = null; mx = my = 0;
+      el.style.setProperty("--mag-x", "0px");
+      el.style.setProperty("--mag-y", "0px");
+    }
+
+    function enable() {
+      if (ring) return;
+      ring = document.createElement("div"); ring.className = "cursor";
+      dot = document.createElement("div"); dot.className = "cursor-dot";
+      ring.setAttribute("aria-hidden", "true"); dot.setAttribute("aria-hidden", "true");
+      document.body.appendChild(ring); document.body.appendChild(dot);
+      addEventListener("pointermove", move, { passive: true });
+      document.addEventListener("pointerover", over);
+      document.addEventListener("pointerout", out);
+      addEventListener("pointerdown", function () { ring.classList.add("is-down"); });
+      addEventListener("pointerup", function () { ring.classList.remove("is-down"); });
+      addEventListener("scroll", function () { if (magnet) mRect = magnet.getBoundingClientRect(); }, { passive: true });
+      raf = requestAnimationFrame(frame);
+    }
+    function disable() {
+      if (!ring) return;
+      cancelAnimationFrame(raf); raf = null;
+      removeEventListener("pointermove", move);
+      document.removeEventListener("pointerover", over);
+      document.removeEventListener("pointerout", out);
+      release();
+      ring.remove(); dot.remove(); ring = dot = null;
+      document.documentElement.classList.remove("cursor-on");
+      on = false;
+    }
+    function sync() { (fineMQ.matches && !reduced()) ? enable() : disable(); }
+
+    sync();
+    // the old build checked the preference once and never listened; toggling the
+    // OS setting left the cursor running until reload
+    (reduceMQ.addEventListener ? reduceMQ.addEventListener("change", sync) : reduceMQ.addListener(sync));
+    (fineMQ.addEventListener ? fineMQ.addEventListener("change", sync) : fineMQ.addListener(sync));
   })();
 })();

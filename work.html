@@ -26,6 +26,14 @@
 </head>
 <body>
 
+<div class="loader" id="loader" hidden>
+  <div class="loader__inner">
+    <svg class="loader__mark" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
+    <div class="loader__wm" aria-hidden="true"><span style="--i:0">O</span><span style="--i:1">R</span><span style="--i:2">V</span><span style="--i:3">I</span><span style="--i:4">N</span><span style="--i:5">L</span><span style="--i:6">A</span><span style="--i:7">B</span><span style="--i:8">S</span><span style="--i:9">.</span></div>
+    <div class="loader__rule"></div>
+  </div>
+</div>
+
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="mark" viewBox="-26 -26 52 52">
     <g fill="currentColor">
@@ -38,7 +46,6 @@
 </svg>
 
 <a class="skip" href="#main">Skip to content</a>
-<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 <div id="navSentinel" style="position:absolute;top:0;height:10px;width:1px" aria-hidden="true"></div>
 
 <header class="nav" id="nav">
@@ -94,14 +101,14 @@
   </section>
 
   <!-- ======================= CASE STUDIES =======================
-       TEMPLATE SLOT — one <article class="case"> per project. To add another,
+       TEMPLATE SLOT — one <article class="case" data-reveal style="--i:0"> per project. To add another,
        copy a whole <article> and replace the labelled fields.
   ================================================================= -->
   <section class="section surface--tint">
     <div class="wrap">
 
       <!-- ---------- CASE 1 — REAL PROJECT ---------- -->
-      <article class="case">
+      <article class="case" data-reveal style="--i:1">
         <div class="case__head">
           <p class="eyebrow eyebrow--neon">01 &middot; UniConnect &middot; Tzu Chi University</p>
           <h2 class="case__title">One marketplace for everything a campus passes around.</h2>
@@ -161,7 +168,7 @@
       </article>
 
       <!-- ---------- CASE 2 ---------- -->
-      <article class="case">
+      <article class="case" data-reveal style="--i:2">
         <div class="case__head">
           <p class="eyebrow eyebrow--neon">02 &middot; Representative trade workflow &middot; Trade &amp; fit-out</p>
           <h2 class="case__title">The quote that used to eat every Friday night.</h2>
@@ -217,7 +224,7 @@
       </article>
 
       <!-- ---------- CASE 3 ---------- -->
-      <article class="case">
+      <article class="case" data-reveal style="--i:3">
         <div class="case__head">
           <p class="eyebrow eyebrow--neon">03 &middot; Representative retail workflow &middot; Local retail</p>
           <h2 class="case__title">Phone orders off the notepad, and nothing lost again.</h2>
@@ -275,44 +282,13 @@
   </section>
 
   <!-- ======================= CONTACT ======================= -->
-  <section class="section contact surface--inverse" id="contact">
-    <div class="wrap">
-      <div class="contact__inner">
-        <p class="eyebrow eyebrow--neon">Start here</p>
-        <h2 class="h2">Want yours written up like this?</h2>
-        <p class="lede">
-          Tell us the part of your week you'd most like to stop doing. We'll say honestly
-          whether it's a website problem, an ads problem, or a twenty-minute automation —
-          and roughly what each would cost.
-        </p>
-        <a class="mailto" href="mailto:hello@orvinlab.com">hello@orvinlab.com</a>
-        <p class="tiny">
-          Replies within one working day &middot; No sales sequence, ever
-        </p>
-      </div>
-    </div>
-  </section>
+      <div id="site-contact" data-eyebrow="Start here" data-heading="Want yours written up like this?" data-lede="Tell us the part of your week you would most like to stop doing. We will say honestly whether it is a website problem, an ads problem, or a twenty-minute automation."></div>
 
 </main>
 
-<footer class="footer surface--inverse">
-  <div class="wrap footer__inner">
-    <a class="wm" href="index.html" aria-label="ORVINLABS — home"
-      ><span aria-hidden="true">ORVINLABS</span><span class="wm__dot" aria-hidden="true"></span
-    ></a>
-    <nav class="footer__links" aria-label="Footer">
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="work.html">Work</a>
-      <a href="products.html">Services</a>
-      <a href="mailto:hello@orvinlab.com">hello@orvinlab.com</a>
-    </nav>
-    <p class="footer__legal">&copy; <span id="year">2026</span> ORVINLABS</p>
-  </div>
-</footer>
+<div id="site-footer"></div>
 
-<!-- GSAP: UMD build, so it works as a classic script with no build step -->
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+<script src="assets/chrome.js"></script>
 <script src="assets/main.js" defer></script>
 </body>
 </html>
