@@ -944,8 +944,6 @@ html.cursor-on,html.cursor-on a,html.cursor-on button,html.cursor-on .acc__q{cur
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes drift{to{transform:translate3d(-30px,-30px,0)}} /* exactly one tile → seamless */
-  100%{transform:translateY(100%)}
-}
 
 /* ---------------- RESPONSIVE ---------------- */
 @media (max-width:1000px){
@@ -1117,4 +1115,36 @@ html.cursor-on,html.cursor-on a,html.cursor-on button,html.cursor-on .acc__q{cur
   .btn::before{display:none}
   .textlink,.footer__col a,.menu__mail{background-size:0 var(--hair)!important}
   .textlink:hover,.footer__col a:hover,.menu__mail:hover{background-size:100% var(--hair)!important}
+}
+
+/* ============================================================
+   MOBILE
+   Touch targets first: on a phone the footer and contact links were
+   18-26px tall, well under the 44px a thumb needs. Padding is added
+   only at this breakpoint so the desktop rhythm is untouched.
+   ============================================================ */
+@media (max-width:640px){
+  .footer__col li a,.footer__contact a{min-height:44px;display:flex;align-items:center}
+  .footer__col ul{gap:2px}
+  .menu__mail{min-height:44px;display:inline-flex;align-items:center}
+  .textlink{min-height:44px}
+  .nav__brand{min-height:44px;align-items:center}
+  .footer__base{gap:10px}
+
+  /* the accordion question is the whole row, so the tap area is the row */
+  .accs .acc__q{min-height:56px}
+
+  /* long unbroken strings — the email address especially — must not push
+     the layout wider than the screen */
+  .channel__sub,.footer__contact span{overflow-wrap:anywhere}
+
+  /* headings tighten up: clamp minimums were tuned for desktop */
+  .h1{line-height:1.04}
+  .h2{line-height:1.06}
+  .contact__inner{gap:16px}
+  .section{padding:clamp(64px,14vw,96px) 0}
+}
+@media (max-width:400px){
+  .chips{gap:6px}
+  .chip{font-size:10px;padding:5px 9px}
 }
