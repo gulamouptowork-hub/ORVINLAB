@@ -461,7 +461,6 @@ body[data-menu-open] .nav__toggle span:nth-child(2){transform:rotate(-45deg)}
    Canvas sits in the hero backdrop, behind the wordmark. It is painted by
    main.js; everything here is just placement. pointer-events:none so it never
    intercepts a click meant for the buttons above it. */
-.scrollcue{z-index:2}
 
 /* ---------------- TITLE AS AN OBJECT ----------------
    The tilt goes on this wrapper, never on .wm itself: .wm carries the page-load
@@ -496,13 +495,6 @@ body[data-menu-open] .nav__toggle span:nth-child(2){transform:rotate(-45deg)}
   gap:14px 26px;margin-top:40px;
 }
 
-.scrollcue{position:absolute;left:var(--gutter);bottom:34px;z-index:2;display:flex;align-items:center;gap:13px}
-.scrollcue__line{position:relative;width:1px;height:46px;background:var(--border-strong);overflow:hidden}
-.scrollcue__line::after{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(to bottom,transparent,var(--accent),transparent);
-  transform:translateY(-100%);
-}
 
 /* ---------------- INNER PAGE HEADER ---------------- */
 .page-head{
@@ -834,6 +826,22 @@ html.cursor-on,html.cursor-on a,html.cursor-on button,html.cursor-on .acc__q{cur
 .acc__panel > div{overflow:hidden;min-height:0}
 .acc__panel p{padding:0 48px 26px 0;color:var(--text-muted);line-height:1.68;max-width:70ch}
 
+
+/* ---------------- ACCORDION GROUP ---------------- */
+.accs{
+  border-top:var(--hair) solid var(--border-hairline);
+  background:var(--surface-raised);
+  border-radius:var(--radius);
+  border:var(--hair) solid var(--border-hairline);
+  box-shadow:var(--shadow-raised);
+  overflow:hidden;
+  max-width:78ch;
+}
+.accs .acc{border-bottom:var(--hair) solid var(--border-hairline)}
+.accs .acc:last-child{border-bottom:0}
+.accs .acc__q{padding:22px clamp(18px,2.4vw,28px)}
+.accs .acc__panel p{padding:0 clamp(18px,2.4vw,28px) 22px 0;margin-left:clamp(18px,2.4vw,28px)}
+
 /* ============================================================
    CONTACT ANCHOR
    The only heavy-contrast moment on the page. The shift from light to
@@ -919,8 +927,7 @@ html.cursor-on,html.cursor-on a,html.cursor-on button,html.cursor-on .acc__q{cur
 
   .nav__brand .petal{animation:spin var(--dur-spin) var(--ease-linear) infinite}
   .backdrop__grid{animation:drift var(--dur-drift) var(--ease-linear) infinite}
-  .scrollcue__line::after{animation:pulse var(--dur-pulse) var(--ease-in-out) infinite}
-}
+  }
 @keyframes rise{from{opacity:0;transform:translateY(22px)}}
 /* the pull-back. blur is paint-heavy, so it is kept small and one-shot on a
    single element — never on a scroll- or hover-driven path */
@@ -937,9 +944,6 @@ html.cursor-on,html.cursor-on a,html.cursor-on button,html.cursor-on .acc__q{cur
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes drift{to{transform:translate3d(-30px,-30px,0)}} /* exactly one tile → seamless */
-@keyframes pulse{
-  0%{transform:translateY(-100%)}
-  55%{transform:translateY(100%)}
   100%{transform:translateY(100%)}
 }
 
