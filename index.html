@@ -95,20 +95,30 @@
     </div>
 
     <div class="hero__inner wrap">
-      <!-- the wordmark owns the first 1.65s; everything else follows it in -->
-      <div class="title3d" id="title3d">
-        <h1 class="wm">
-          <span class="sr">ORVINLABS — websites, ads, automation and AI for small businesses</span>
-          <span aria-hidden="true">ORVINLABS</span><span class="wm__dot" aria-hidden="true"></span>
-        </h1>
+      <div class="hero__copy">
+        <!-- the wordmark owns the first 1.65s; everything else follows it in -->
+        <div class="title3d" id="title3d">
+          <h1 class="wm">
+            <span class="sr">ORVINLABS — websites, ads, automation and AI for small businesses</span>
+            <span aria-hidden="true">ORVINLABS</span><span class="wm__dot" aria-hidden="true"></span>
+          </h1>
+        </div>
+
+        <p class="hero__tagline enter" style="--d:.95s">A digital studio for small businesses that need websites, advertising, automation, and AI to work together.</p>
+
+        <div class="hero__actions enter" style="--d:1.2s">
+          <a class="btn btn--neon" href="#contact">Start a project</a>
+          <a class="btn" href="work.html">See the work</a>
+        </div>
       </div>
 
-      <p class="hero__tagline enter" style="--d:.95s">A digital studio for small businesses that need websites, advertising, automation, and AI to work together.</p>
-
-      <div class="hero__actions enter" style="--d:1.2s">
-        <a class="btn btn--neon" href="#contact">Start a project</a>
-        <a class="btn" href="work.html">See the work</a>
-      </div>
+      <!-- Decorative: the copy beside it already says everything this shows, so
+           an alt text would only repeat it to a screen reader. width/height are
+           the real viewBox so the box is reserved before the file arrives. -->
+      <img class="hero__art enter" style="--d:1.35s"
+           src="assets/hero-illustration.svg"
+           width="750" height="500" alt="" aria-hidden="true"
+           decoding="async" fetchpriority="low">
     </div>
 
   </section>

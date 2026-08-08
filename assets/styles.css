@@ -473,11 +473,35 @@ body[data-menu-open] .nav__toggle span:nth-child(2){transform:rotate(-45deg)}
   transition:transform var(--dur-enter) var(--ease-out);   /* only until JS takes the wheel */
 }
 .title3d[data-live]{transition:none}
-.hero__inner{position:relative;z-index:2;width:100%;text-align:center}
+/* Single column and centred by default; the illustration sits under the copy on
+   a phone. The split only happens where there is genuinely room for it. */
+.hero__inner{position:relative;z-index:2;width:100%;text-align:center;display:grid;gap:clamp(28px,4vw,44px)}
 .hero .wm{
   display:block;               /* block, so no line-box strut leading around it */
   font-size:clamp(2.8rem,11vw,8.4rem);
   margin:26px 0 30px;
+}
+.hero__art{
+  width:100%;height:auto;
+  /* matches the real viewBox, so the box is reserved before the file lands */
+  aspect-ratio:750 / 500;
+  max-width:min(520px,100%);
+  justify-self:center;
+}
+
+@media (min-width:900px){
+  .hero__inner{
+    grid-template-columns:minmax(0,1fr) minmax(0,.92fr);
+    align-items:center;
+    text-align:left;
+    gap:clamp(28px,4vw,56px);
+  }
+  /* 11vw was sized for a full-width wordmark; at half the width it would
+     overflow its column, so the split layout gets its own ramp */
+  .hero .wm{font-size:clamp(2.4rem,6.4vw,5.6rem)}
+  .hero__tagline{margin-left:0;margin-right:0}
+  .hero__actions{justify-content:flex-start}
+  .hero__art{max-width:100%;justify-self:end}
 }
 .hero__tagline{
   color:var(--text-muted);
