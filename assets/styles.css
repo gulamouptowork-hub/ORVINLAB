@@ -327,16 +327,6 @@ body::after{
 }
 .textlink .arrow{transition:transform var(--dur-fast) var(--ease-out)}
 
-/* ---------------- CURSOR GLOW (desktop pointers only) ---------------- */
-.cursor-glow{
-  position:fixed;top:0;left:0;
-  width:620px;height:620px;margin:-310px 0 0 -310px;
-  pointer-events:none;z-index:1;opacity:0;border-radius:50%;
-  background:radial-gradient(circle closest-side,var(--accent-wash),transparent 72%);
-  transition:opacity var(--dur-slow) var(--ease-out);
-  will-change:transform;
-}
-.cursor-glow[data-on]{opacity:1}
 
 /* ---------------- NAV ---------------- */
 .nav{
@@ -796,37 +786,53 @@ body[data-menu-open] .nav__toggle span:nth-child(2){transform:rotate(-45deg)}
 .faq__q,.faq__a{padding-left:clamp(18px,2.2vw,26px);padding-right:clamp(18px,2.2vw,26px)}
 
 /* ============================================================
-   CUSTOM CURSOR
-   Two elements so they can lag by different amounts: the ring trails behind on a
-   longer GSAP tween, the dot tracks almost immediately. That difference is the
-   whole effect — matched durations just look like a badly drawn cursor.
+   CUSTOM CURSOR — difference-blend dot
 
-   Only enabled when JS confirms a fine pointer AND that motion is welcome; the
-   .has-cursor gate is what hides the native one. Never hidden otherwise, because
-   `cursor:none` also throws away OS cursor size and contrast settings.
+   mix-blend-mode blends against the backdrop WITHIN ITS OWN STACKING
+   CONTEXT. That single fact dictates the whole design:
+
+   · The dot must sit directly on <body>. Any wrapper carrying a
+     transform, filter, opacity below 1 or isolation would create a
+     stacking context and confine the blend to the dot's own 14px box,
+     which inverts nothing.
+   · So position and scale cannot be split across two elements. Both
+     compose into ONE transform, written from JS, on the element that
+     carries the blend mode.
+   · The fill must be pure #ffffff, not a token. difference computes
+     |backdrop - source| per channel, and only 1.0 gives a true
+     inversion. Any other value tints the result.
+
+   Verified clear at the time of writing: nothing on html or body sets
+   isolation, filter, opacity or transform.
    ============================================================ */
-.cursor,.cursor-dot{
-  position:fixed;top:0;left:0;z-index:300;
-  pointer-events:none;opacity:0;
-  will-change:transform;
+.cursor-dot{
+  position:fixed;
+  top:0;left:0;
+  width:14px;height:14px;
+  margin:-7px 0 0 -7px;          /* centre on the pointer without touching transform */
+  border-radius:50%;
+  background:#ffffff;            /* deliberately literal — see note above */
+  mix-blend-mode:difference;
+  pointer-events:none;           /* never intercept a click */
+  z-index:500;                   /* above the loader, which is 400 */
+  opacity:0;
   transition:opacity var(--dur-base) var(--ease-out);
 }
-/* The ring is a zero-size anchor that JS positions; the visible circle is the
-   pseudo-element, which SCALES. Animating width/height/margin here would be
-   animating layout — free on a fixed element, but still against the rule, and
-   transform is what the compositor actually wants. */
-.cursor::before,.cursor-dot::before{
-  content:"";position:absolute;left:50%;top:50%;border-radius:50%;
-  transform:translate(-50%,-50%) scale(1);
-  transition:transform var(--dur-base) var(--ease-out),
-             background-color var(--dur-base) var(--ease-out);
-}
-.cursor::before{width:36px;height:36px;border:var(--hair-2) solid var(--accent)}
-.cursor-dot::before{width:6px;height:6px;background:var(--accent)}
-.cursor-on .cursor,.cursor-on .cursor-dot{opacity:1}
-.cursor.is-hover::before{transform:translate(-50%,-50%) scale(1.78);background:var(--accent-wash)}
-.cursor.is-down::before{transform:translate(-50%,-50%) scale(.78)}
-html.cursor-on,html.cursor-on a,html.cursor-on button,html.cursor-on .acc__q{cursor:none}
+.cursor-on .cursor-dot{opacity:1}
+
+/* The native cursor is hidden only once JS has confirmed a fine pointer and
+   that motion is welcome, and only then — cursor:none also discards the OS
+   cursor size and contrast settings some people depend on. */
+html.cursor-on,
+html.cursor-on a,
+html.cursor-on button,
+html.cursor-on summary,
+html.cursor-on input,
+html.cursor-on textarea,
+html.cursor-on select,
+html.cursor-on label,
+html.cursor-on .acc__q,
+html.cursor-on .interactive{cursor:none}
 
 /* Magnetism writes custom properties, never style.transform: the stylesheet
    composes translate() with the :active scale, and an inline transform would
@@ -1149,7 +1155,7 @@ html.cursor-on,html.cursor-on a,html.cursor-on button,html.cursor-on .acc__q{cur
   }
   html{scroll-behavior:auto}
   .loader{display:none!important}
-  .cursor,.cursor-dot{display:none!important}
+  .cursor-dot{display:none!important}
   .backdrop__grid{animation:none!important}
   /* colour still changes, it just arrives at once */
   .card:hover,.teaser:hover,.principle:hover,.stat:hover,.channel:hover,.mailto:hover{transform:none!important}

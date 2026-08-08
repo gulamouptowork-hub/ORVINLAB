@@ -155,98 +155,113 @@
   })();
 
   /* ============================================================
-     CURSOR + MAGNETIC PULL — vanilla rAF, no library
-     The ring lags, the dot tracks; that gap is the whole effect.
-     Hover growth is a CSS class, not JS: only position genuinely
-     needs per-frame interpolation.
+     CUSTOM CURSOR — difference-blend dot, vanilla rAF
+
+     Position and scale compose into ONE transform on ONE element. They
+     cannot be split across a wrapper: a wrapper with a transform makes a
+     stacking context, and mix-blend-mode only blends inside its own
+     stacking context, so the dot would invert nothing but itself.
+
+     That also means the scale cannot be a CSS transition — JS owns the
+     transform. It is lerped in the same loop, which is frame-rate
+     independent and matches the position easing anyway.
      ============================================================ */
   (function () {
-    var ring, dot, raf = null;
-    var tx = 0, ty = 0, rx = 0, ry = 0, dx = 0, dy = 0;
+    var dot = null, raf = null, last = 0;
+    var tx = 0, ty = 0, x = 0, y = 0;          // pointer target, eased position
+    var scale = 1, scaleTarget = 1;
     var magnet = null, mRect = null, mx = 0, my = 0;
-    var on = false;
+    var shown = false;
 
-    function lerpK(k, dt) { return 1 - Math.pow(1 - k, dt / 16.67); }
+    // frame-rate independent easing: k is the fraction closed per 60fps frame
+    function ease(k, dt) { return 1 - Math.pow(1 - k, dt / 16.67); }
+
+    var HOVER = 'a, button, summary, input, textarea, select, label, .acc__q, .chip, .interactive';
+    var MAGNET = '.btn, .teaser, .channel, .mailto';
 
     function frame(now) {
-      var dt = Math.min(50, now - (frame.last || now)); frame.last = now;
-      rx += (tx - rx) * lerpK(0.13, dt);
-      ry += (ty - ry) * lerpK(0.13, dt);
-      dx += (tx - dx) * lerpK(0.50, dt);
-      dy += (ty - dy) * lerpK(0.50, dt);
-      ring.style.transform = "translate3d(" + rx + "px," + ry + "px,0)";
-      dot.style.transform = "translate3d(" + dx + "px," + dy + "px,0)";
+      var dt = Math.min(50, now - (last || now)); last = now;
+
+      x += (tx - x) * ease(0.35, dt);
+      y += (ty - y) * ease(0.35, dt);
+      scale += (scaleTarget - scale) * ease(0.30, dt);   // ~99% in 250ms; 0.20 read as sluggish
+
+      dot.style.transform =
+        'translate3d(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px,0) scale(' + scale.toFixed(3) + ')';
+
       if (magnet && mRect) {
-        // cached rect: reading it per frame would force layout every frame
+        // rect is cached on pointerover; reading it per frame would force layout
         var ox = Math.max(-10, Math.min(10, (tx - (mRect.left + mRect.width / 2)) * 0.22));
         var oy = Math.max(-10, Math.min(10, (ty - (mRect.top + mRect.height / 2)) * 0.28));
-        mx += (ox - mx) * lerpK(0.15, dt);
-        my += (oy - my) * lerpK(0.15, dt);
-        // CSS custom properties, never style.transform: the stylesheet composes
-        // translate() with :active scale(), and an inline transform would kill it
-        magnet.style.setProperty("--mag-x", mx.toFixed(2) + "px");
-        magnet.style.setProperty("--mag-y", my.toFixed(2) + "px");
+        mx += (ox - mx) * ease(0.15, dt);
+        my += (oy - my) * ease(0.15, dt);
+        magnet.style.setProperty('--mag-x', mx.toFixed(2) + 'px');
+        magnet.style.setProperty('--mag-y', my.toFixed(2) + 'px');
       }
       raf = requestAnimationFrame(frame);
     }
 
-    var MAG = ".btn, .teaser, .channel, .mailto";
-    var HOV = "a, button, summary, .acc__q, .chip, " + MAG;
-
     function move(e) {
       tx = e.clientX; ty = e.clientY;
-      if (!on) { on = true; rx = dx = tx; ry = dy = ty; document.documentElement.classList.add("cursor-on"); }
+      if (!shown) {                    // no swoop in from 0,0 on the first move
+        shown = true; x = tx; y = ty;
+        document.documentElement.classList.add('cursor-on');
+      }
     }
     function over(e) {
-      var t = e.target.closest && e.target.closest(HOV);
-      if (t) ring.classList.add("is-hover");
-      var m = e.target.closest && e.target.closest(MAG);
+      if (!e.target.closest) return;
+      if (e.target.closest(HOVER)) scaleTarget = 2;
+      var m = e.target.closest(MAGNET);
       if (m && m !== magnet) { release(); magnet = m; mRect = m.getBoundingClientRect(); }
     }
     function out(e) {
-      var t = e.target.closest && e.target.closest(HOV);
-      if (t && !(e.relatedTarget && t.contains(e.relatedTarget))) ring.classList.remove("is-hover");
-      var m = e.target.closest && e.target.closest(MAG);
+      if (!e.target.closest) return;
+      var t = e.target.closest(HOVER);
+      if (t && !(e.relatedTarget && t.contains(e.relatedTarget))) scaleTarget = 1;
+      var m = e.target.closest(MAGNET);
       if (m && m === magnet && !(e.relatedTarget && m.contains(e.relatedTarget))) release();
     }
     function release() {
       if (!magnet) return;
       var el = magnet; magnet = null; mRect = null; mx = my = 0;
-      el.style.setProperty("--mag-x", "0px");
-      el.style.setProperty("--mag-y", "0px");
+      el.style.setProperty('--mag-x', '0px');
+      el.style.setProperty('--mag-y', '0px');
     }
+    function rescan() { if (magnet) mRect = magnet.getBoundingClientRect(); }
 
     function enable() {
-      if (ring) return;
-      ring = document.createElement("div"); ring.className = "cursor";
-      dot = document.createElement("div"); dot.className = "cursor-dot";
-      ring.setAttribute("aria-hidden", "true"); dot.setAttribute("aria-hidden", "true");
-      document.body.appendChild(ring); document.body.appendChild(dot);
-      addEventListener("pointermove", move, { passive: true });
-      document.addEventListener("pointerover", over);
-      document.addEventListener("pointerout", out);
-      addEventListener("pointerdown", function () { ring.classList.add("is-down"); });
-      addEventListener("pointerup", function () { ring.classList.remove("is-down"); });
-      addEventListener("scroll", function () { if (magnet) mRect = magnet.getBoundingClientRect(); }, { passive: true });
+      if (dot) return;
+      dot = document.createElement('div');
+      dot.className = 'cursor-dot';
+      dot.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(dot);
+      addEventListener('pointermove', move, { passive: true });
+      document.addEventListener('pointerover', over);
+      document.addEventListener('pointerout', out);
+      addEventListener('pointerdown', function () { scaleTarget = 0.7; });
+      addEventListener('pointerup', function () { scaleTarget = 1; });
+      addEventListener('scroll', rescan, { passive: true });
+      addEventListener('resize', rescan);
       raf = requestAnimationFrame(frame);
     }
     function disable() {
-      if (!ring) return;
+      if (!dot) return;
       cancelAnimationFrame(raf); raf = null;
-      removeEventListener("pointermove", move);
-      document.removeEventListener("pointerover", over);
-      document.removeEventListener("pointerout", out);
+      removeEventListener('pointermove', move);
+      document.removeEventListener('pointerover', over);
+      document.removeEventListener('pointerout', out);
+      removeEventListener('scroll', rescan);
+      removeEventListener('resize', rescan);
       release();
-      ring.remove(); dot.remove(); ring = dot = null;
-      document.documentElement.classList.remove("cursor-on");
-      on = false;
+      dot.remove(); dot = null; shown = false;
+      document.documentElement.classList.remove('cursor-on');
     }
     function sync() { (fineMQ.matches && !reduced()) ? enable() : disable(); }
 
     sync();
-    // the old build checked the preference once and never listened; toggling the
-    // OS setting left the cursor running until reload
-    (reduceMQ.addEventListener ? reduceMQ.addEventListener("change", sync) : reduceMQ.addListener(sync));
-    (fineMQ.addEventListener ? fineMQ.addEventListener("change", sync) : fineMQ.addListener(sync));
+    // listen for live changes: the old build checked once and left the cursor
+    // running until reload if the OS setting was toggled
+    (reduceMQ.addEventListener ? reduceMQ.addEventListener('change', sync) : reduceMQ.addListener(sync));
+    (fineMQ.addEventListener ? fineMQ.addEventListener('change', sync) : fineMQ.addListener(sync));
   })();
 })();
