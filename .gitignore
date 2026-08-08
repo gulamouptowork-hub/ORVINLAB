@@ -1,12 +1,3 @@
-# Agent configuration directories
-.claude/
 .agents/
-
-# OS files
-Thumbs.db
-Desktop.ini
-.DS_Store
-
-# Editor
-.vscode/
-.idea/
+.claude/
+skills-lock.json
