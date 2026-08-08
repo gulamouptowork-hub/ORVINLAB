@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORVINLABS — websites, ads, automation and AI</title>
+<meta name="description" content="ORVINLABS helps small businesses build fast websites, run accountable ads, automate repeat admin and add AI where it actually saves time.">
+<meta name="theme-color" content="#050505">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="ORVINLABS — websites, ads, automation and AI">
+<meta property="og:description" content="ORVINLABS helps small businesses build fast websites, run accountable ads, automate repeat admin and add AI where it actually saves time.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ORVINLABS">
+<meta property="og:image" content="assets/og-card.svg">
+<meta property="og:image:alt" content="ORVINLABS social card with dark background and neon green accent">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ORVINLABS — websites, ads, automation and AI">
+<meta name="twitter:description" content="Fast websites, accountable ads, lighter admin and practical AI for small businesses.">
+<meta name="twitter:image" content="assets/og-card.svg">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<!-- The four-petal mark, defined once. Every instance on the page is a <use> of
+     this symbol, so the geometry lives in exactly one place. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="mark" viewBox="-26 -26 52 52">
+    <g fill="currentColor">
+      <path d="M0 0C5.5-6.5 9.5-13 9-21C5-24-5-24-9-21C-9.5-13-5.5-6.5 0 0Z" transform="rotate(45)"/>
+      <path d="M0 0C5.5-6.5 9.5-13 9-21C5-24-5-24-9-21C-9.5-13-5.5-6.5 0 0Z" transform="rotate(135)"/>
+      <path d="M0 0C5.5-6.5 9.5-13 9-21C5-24-5-24-9-21C-9.5-13-5.5-6.5 0 0Z" transform="rotate(225)"/>
+      <path d="M0 0C5.5-6.5 9.5-13 9-21C5-24-5-24-9-21C-9.5-13-5.5-6.5 0 0Z" transform="rotate(315)"/>
+    </g>
+  </symbol>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+<div id="navSentinel" style="position:absolute;top:0;height:10px;width:1px" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a class="nav__brand" href="index.html" aria-label="ORVINLABS — home">
+      <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
+      <span class="wm" aria-hidden="true">ORVINLABS<span class="wm__dot"></span></span>
+    </a>
+
+    <nav class="nav__links" aria-label="Main">
+      <a class="nav__link" href="index.html" aria-current="page">Home</a>
+      <a class="nav__link" href="about.html">About</a>
+      <a class="nav__link" href="work.html">Work</a>
+      <a class="nav__link" href="products.html">Services</a>
+    </nav>
+
+    <div class="nav__end">
+      <a class="btn btn--neon" href="#contact">Start a project</a>
+      <button class="nav__toggle" id="menuToggle" aria-expanded="false" aria-controls="menu">
+        <span></span><span></span>
+        <span class="sr">Open menu</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="menu" id="menu" data-closed>
+  <a class="menu__link" href="index.html" aria-current="page">Home</a>
+  <a class="menu__link" href="about.html">About</a>
+  <a class="menu__link" href="work.html">Work</a>
+  <a class="menu__link" href="products.html">Services</a>
+  <div class="menu__foot">
+    <a class="btn btn--neon" href="#contact">Start a project</a>
+    <a class="tiny menu__mail" href="mailto:hello@orvinlab.com">hello@orvinlab.com</a>
+  </div>
+</div>
+
+<main id="main">
+
+  <!-- ======================= HERO ======================= -->
+  <section class="hero" id="top">
+    <div class="backdrop" aria-hidden="true">
+      <div class="backdrop__grid"></div>
+      <div class="backdrop__glow"></div>
+    </div>
+
+    <div class="hero__inner wrap">
+      <!-- the wordmark owns the first 1.65s; everything else follows it in -->
+      <div class="title3d" id="title3d">
+        <h1 class="wm">
+          <span class="sr">ORVINLABS — websites, ads, automation and AI for small businesses</span>
+          <span aria-hidden="true">ORVINLABS</span><span class="wm__dot" aria-hidden="true"></span>
+        </h1>
+      </div>
+
+      <p class="hero__tagline enter" style="--d:.95s">A digital studio for small businesses that need websites, advertising, automation, and AI to work together.</p>
+
+      <div class="hero__actions enter" style="--d:1.2s">
+        <a class="btn btn--neon" href="#contact">Start a project</a>
+        <a class="btn" href="work.html">See the work</a>
+      </div>
+    </div>
+
+    <div class="scrollcue enter" style="--d:1.4s" aria-hidden="true">
+      <span class="scrollcue__line"></span>
+      <span class="tiny">Scroll</span>
+    </div>
+  </section>
+
+  <!-- ======================= WHY WE EXIST ======================= -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head section-head--centre">
+        <p class="eyebrow eyebrow--neon">Why we exist</p>
+        <h2 class="h2">You were sold four things that don't talk to each other.</h2>
+        <p class="lede">
+          One company built the site. Someone's cousin ran the ads. The invoices live in
+          a notebook. Nobody is responsible for the whole thing, so nothing compounds.
+          That's the problem we were built to fix.
+        </p>
+      </div>
+
+      <div class="pairs">
+        <div class="pair">
+          <div class="pair__side pair__side--pain">
+            <p class="pair__tag">What you have now</p>
+            <p class="pair__text">
+              A site someone built two years ago that you can't edit without emailing
+              them, and they take a week to reply.
+            </p>
+          </div>
+          <div class="pair__side pair__side--fix">
+            <p class="pair__tag">What you get instead</p>
+            <p class="pair__text">
+              You change your own prices, hours and photos in a plain editor. We're
+              there when you want us, not because you're stuck.
+            </p>
+          </div>
+        </div>
+
+        <div class="pair">
+          <div class="pair__side pair__side--pain">
+            <p class="pair__tag">What you have now</p>
+            <p class="pair__text">
+              Ad spend leaving every month and no honest answer to "did that bring
+              anyone in?"
+            </p>
+          </div>
+          <div class="pair__side pair__side--fix">
+            <p class="pair__tag">What you get instead</p>
+            <p class="pair__text">
+              Every enquiry traced back to what produced it. When something stops
+              paying, we tell you and we switch it off.
+            </p>
+          </div>
+        </div>
+
+        <div class="pair">
+          <div class="pair__side pair__side--pain">
+            <p class="pair__tag">What you have now</p>
+            <p class="pair__text">
+              The same quote typed out for the fortieth time, at 9pm, from your phone.
+            </p>
+          </div>
+          <div class="pair__side pair__side--fix">
+            <p class="pair__tag">What you get instead</p>
+            <p class="pair__text">
+              A form that prices the job and sends the quote itself. You approve it, or
+              you don't, and your evening stays yours.
+            </p>
+          </div>
+        </div>
+
+        <div class="pair">
+          <div class="pair__side pair__side--pain">
+            <p class="pair__tag">What you have now</p>
+            <p class="pair__text">
+              Four suppliers, four invoices, and each one blaming the other three when
+              something breaks.
+            </p>
+          </div>
+          <div class="pair__side pair__side--fix">
+            <p class="pair__tag">What you get instead</p>
+            <p class="pair__text">
+              One team, one number to call, and nobody to hide behind when it's our
+              fault.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="shot shot--wide" style="margin-top:clamp(28px,4vw,52px)">
+        <img src="assets/shots/before-after-site.png" alt="Before-and-after website mockup with an old cramped site beside a modern rebuilt version" loading="lazy" decoding="async">
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head section-head--centre">
+        <p class="eyebrow eyebrow--neon">What changes first</p>
+        <h2 class="h2">The work gets easier to run.</h2>
+        <p class="lede">
+          We don't sell vanity metrics. We focus on the parts that make the business
+          faster to run, clearer to track, and easier to hand over.
+        </p>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <p class="stat__num"><i>Fast enough</i></p>
+          <p class="stat__label">Lean sites</p>
+          <p class="stat__note">Built to feel immediate on phones and clean to search engines.</p>
+        </div>
+        <div class="stat">
+          <p class="stat__num"><i>Less retyping</i></p>
+          <p class="stat__label">Automation</p>
+          <p class="stat__note">Quotes, reminders and follow-ups stop eating the same time twice.</p>
+        </div>
+        <div class="stat">
+          <p class="stat__num"><i>Clear source</i></p>
+          <p class="stat__label">Advertising</p>
+          <p class="stat__note">Calls and enquiries are tied back to the channel that produced them.</p>
+        </div>
+        <div class="stat">
+          <p class="stat__num"><i>You own it</i></p>
+          <p class="stat__label">Handover</p>
+          <p class="stat__note">Domain, hosting, ad accounts and data stay in your name.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= FEATURED WORK ======================= -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow eyebrow--neon">Selected work</p>
+        <h2 class="h2">Three jobs, start to finish.</h2>
+        <p class="lede">
+          One is a live university platform. Two are representative builds for trade
+          and retail workflows that show how we think.
+        </p>
+      </div>
+
+      <div class="teasers">
+        <a class="teaser" href="work.html">
+          <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
+          <h3 class="teaser__title">UniConnect</h3>
+          <p class="teaser__body">
+            A whole campus buying, selling and reuniting lost things in one place.
+          </p>
+        </a>
+        <a class="teaser" href="work.html">
+          <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
+          <h3 class="teaser__title">Trade workflow</h3>
+          <p class="teaser__body">
+            Quotes that price themselves, so Friday nights stopped being admin nights.
+          </p>
+        </a>
+        <a class="teaser" href="work.html">
+          <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
+          <h3 class="teaser__title">Retail workflow</h3>
+          <p class="teaser__body">
+            Phone orders off the notepad and into something that doesn't lose them.
+          </p>
+        </a>
+        <a class="teaser" href="work.html">
+          <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
+          <h3 class="teaser__title">Read all three</h3>
+          <p class="teaser__body">
+            Problem, what we built, and what actually changed. No filler.
+          </p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= WHAT WE DO ======================= -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head section-head--centre">
+        <p class="eyebrow eyebrow--neon">Services</p>
+        <h2 class="h2">Four services. They work best together.</h2>
+        <p class="lede">
+          Take one if that's all you need. But a fast site with no ads pointing at it, or
+          ads pointing at a form nobody answers, is money resting in the wrong place.
+        </p>
+      </div>
+
+      <div class="cards">
+        <article class="card">
+          <div class="card__top">
+            <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
+            <span class="card__num">01</span>
+          </div>
+          <h3 class="h3 card__title">Websites</h3>
+          <p class="card__body">
+            Loads in under a second, reads properly one-handed on a bus, and says what
+            you sell before anyone has to scroll. Built so you can change the words
+            yourself.
+          </p>
+          <ul class="card__list">
+            <li>Phones first, always</li>
+            <li>You edit the copy</li>
+            <li>Domain in your name</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <div class="card__top">
+            <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
+            <span class="card__num">02</span>
+          </div>
+          <h3 class="h3 card__title">Advertising</h3>
+          <p class="card__body">
+            Google and Meta, pointed only at people already looking for what you sell.
+            Small budget first, then more of whatever made the phone ring.
+          </p>
+          <ul class="card__list">
+            <li>Google &amp; Meta</li>
+            <li>Every call traced to a source</li>
+            <li>Your ad account, your data</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <div class="card__top">
+            <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
+            <span class="card__num">03</span>
+          </div>
+          <h3 class="h3 card__title">Automation</h3>
+          <p class="card__body">
+            Quotes, bookings, invoices and the third follow-up you always forget. The
+            jobs you currently do twice get done once, by something that never gets
+            busy.
+          </p>
+          <ul class="card__list">
+            <li>Self-pricing quote forms</li>
+            <li>Invoice &amp; deposit chasing</li>
+            <li>Follow-ups that don't slip</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <div class="card__top">
+            <svg class="petal" aria-hidden="true" focusable="false"><use href="#mark"/></svg>
+            <span class="card__num">04</span>
+          </div>
+          <h3 class="h3 card__title">AI</h3>
+          <p class="card__body">
+            Handles the twenty questions you answer every week, flags the enquiries worth
+            your morning, and drafts the dull replies in your own phrasing. You approve
+            before anything sends.
+          </p>
+          <ul class="card__list">
+            <li>Answers your common questions</li>
+            <li>Sorts and flags enquiries</li>
+            <li>Drafts, you approve</li>
+          </ul>
+        </article>
+      </div>
+
+      <p style="margin-top:clamp(26px,3.5vw,40px);text-align:center">
+        <a class="textlink" href="products.html">
+          Full deliverables for each <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ======================= PROCESS ======================= -->
+  <section class="section" id="process">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow eyebrow--neon">How it goes</p>
+        <h2 class="h2">Four steps, and you always know which one you're in.</h2>
+        <p class="lede">
+          The whole thing is designed to end with you not needing us. That last step is
+          the point of the first three.
+        </p>
+      </div>
+
+      <div class="steps" id="steps">
+        <div class="steps__rail" aria-hidden="true"><span class="steps__fill"></span></div>
+        <ol class="steps__list">
+          <li class="step">
+            <span class="step__node">01</span>
+            <h3 class="h3">Diagnosis</h3>
+            <p class="step__body">
+              One call, 30 minutes. What you sell, who buys it, and where your week
+              actually goes. You leave with a plan whether or not you hire us.
+            </p>
+          </li>
+          <li class="step">
+            <span class="step__node">02</span>
+            <h3 class="h3">Build</h3>
+            <p class="step__body">
+              A live link in week one that you watch fill in. Comment on it whenever you
+              like — no month of silence ending in a you have to be polite about.
+            </p>
+          </li>
+          <li class="step">
+            <span class="step__node">03</span>
+            <h3 class="h3">Launch</h3>
+            <p class="step__body">
+              Tested on real phones, every form submitted once by a human, tracking live
+              from hour one. Day one already tells you something.
+            </p>
+          </li>
+          <li class="step">
+            <span class="step__node">04</span>
+            <h3 class="h3">Autonomy</h3>
+            <p class="step__body">
+              We hand over the logins, walk you through editing it, and send one readable
+              page a month. Stay if it's useful. Leave and nothing breaks.
+            </p>
+          </li>
+        </ol>
+      </div>
+
+      <div class="shot" style="margin-top:clamp(30px,4.5vw,56px);aspect-ratio:21/9">
+        <img src="assets/shots/monthly-report.png" alt="Monthly performance report with three metrics and a thin green sparkline" loading="lazy" decoding="async">
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= FAQ ======================= -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow eyebrow--neon">Common questions</p>
+        <h2 class="h2">The three things everybody asks first.</h2>
+      </div>
+
+      <div class="faq">
+        <details class="faq__item">
+          <summary class="faq__q">
+            What does this actually cost?
+            <span class="faq__sign" aria-hidden="true"></span>
+          </summary>
+          <p class="faq__a">
+            A site for a small business usually lands between a few hundred and a few
+            thousand, depending on how many pages and how much of it we write. Ads are
+            billed at cost — you pay Google or Meta directly and we charge for the
+            managing, so we never profit from talking you into a bigger budget. You'll
+            have a number in writing before anyone starts, and it doesn't move unless
+            you ask for something new.
+          </p>
+        </details>
+
+        <details class="faq__item">
+          <summary class="faq__q">
+            I'm not technical at all. Is that a problem?
+            <span class="faq__sign" aria-hidden="true"></span>
+          </summary>
+          <p class="faq__a">
+            No — it's most of who we work with. You'll never be asked to choose between
+            two hosting plans or told something is "just a DNS thing." We handle the
+            plumbing, and the only part you touch is a text box where you change your
+            prices. If a sentence we send you needs a second read, that's our mistake to
+            fix, not yours to decode.
+          </p>
+        </details>
+
+        <details class="faq__item">
+          <summary class="faq__q">
+            What happens if I want to leave?
+            <span class="faq__sign" aria-hidden="true"></span>
+          </summary>
+          <p class="faq__a">
+            You take everything with you, because it was already yours. The domain,
+            hosting, ad accounts and data are registered in your name on day one, not
+            ours — so leaving is a password change, not a negotiation. There's no
+            minimum term and nothing to buy back. A studio that has to trap you isn't
+            confident about the work.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= CONTACT ======================= -->
+  <section class="section contact" id="contact">
+    <div class="wrap">
+      <div class="contact__inner">
+        <p class="eyebrow eyebrow--neon">Start here</p>
+        <h2 class="h2">One line about your business is enough.</h2>
+        <p class="lede">
+          Not a brief. Not a budget. Just tell us what's eating your week — the quote you
+          keep retyping, the site you're embarrassed to send, the ads you can't read.
+          You'll get a real person's answer within a day, saying whether we can help and
+          roughly what it costs. If we're the wrong fit we'll say so and point you
+          somewhere better.
+        </p>
+        <a class="mailto" href="mailto:hello@orvinlab.com">hello@orvinlab.com</a>
+        <p class="tiny" style="color:var(--muted)">
+          Replies within one working day &middot; No sales sequence, ever
+        </p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <a class="wm" href="index.html" aria-label="ORVINLABS — home"
+      ><span aria-hidden="true">ORVINLABS</span><span class="wm__dot" aria-hidden="true"></span
+    ></a>
+    <nav class="footer__links" aria-label="Footer">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="work.html">Work</a>
+      <a href="products.html">Services</a>
+      <a href="mailto:hello@orvinlab.com">hello@orvinlab.com</a>
+    </nav>
+    <p class="footer__legal">&copy; <span id="year">2026</span> ORVINLABS</p>
+  </div>
+</footer>
+
+<!-- GSAP: UMD build, so it works as a classic script with no build step -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+<script src="assets/main.js" defer></script>
+</body>
+</html>

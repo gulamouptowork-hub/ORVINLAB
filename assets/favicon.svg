@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ORVINLABS">
+  <rect width="64" height="64" rx="16" fill="#050505"/>
+  <g fill="#32ff4e" transform="translate(32 32)">
+    <path d="M0 0C5.5-6.5 9.5-13 9-21C5-24-5-24-9-21C-9.5-13-5.5-6.5 0 0Z" transform="rotate(45)"/>
+    <path d="M0 0C5.5-6.5 9.5-13 9-21C5-24-5-24-9-21C-9.5-13-5.5-6.5 0 0Z" transform="rotate(135)"/>
+    <path d="M0 0C5.5-6.5 9.5-13 9-21C5-24-5-24-9-21C-9.5-13-5.5-6.5 0 0Z" transform="rotate(225)"/>
+    <path d="M0 0C5.5-6.5 9.5-13 9-21C5-24-5-24-9-21C-9.5-13-5.5-6.5 0 0Z" transform="rotate(315)"/>
+  </g>
+</svg>
